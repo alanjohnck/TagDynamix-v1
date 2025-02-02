@@ -1,0 +1,65 @@
+{
+    "companies": [
+      {
+        "name": "Rockwell Software",
+        "logo": "./platform/factorytalk.svg",
+        "products": [
+          "FactoryTalk",
+          "ViewME & SE",
+          "FT Optix",
+          "PlantPAx"
+        ]
+      },
+      {
+        "name": "Inductive Automation",
+        "logo": "./platform/ignition.svg",
+        "products": [
+          "Ignition"
+        ]
+      },
+      {
+        "name": "Canary Labs",
+        "logo": "./platform//Canary.svg",
+        "products": [
+          "Historian",
+          "Data Analytics"
+        ]
+      },
+      {
+        "name": "Siemens",
+        "logo": "./platform/siemens.svg",
+        "products": [
+          "WinCC"
+        ]
+      },
+      {
+        "name": "AVEVA",
+        "logo": "./platform/aveva.svg",
+        "products": [
+          "InTouch",
+          "ArchestrA",
+          "System Platform"
+        ]
+      },
+      {
+        "name": "SEPASOFT",
+        "logo": "./platform/sepsoft.svg",
+        "products": [
+          "MES",
+          "Control",
+          "Track",
+          "Document"
+        ]
+      },
+      {
+        "name": "Falkonry",
+        "logo": "./platform/falkonry.svg",
+        "products": [
+          "Time series AI"
+        ]
+      }
+      ,{
+        "name": "PTC"
+      }
+    ]
+  }

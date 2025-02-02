@@ -1,0 +1,22 @@
+[
+    {
+        "id":1,
+        "icon":"./Octagon.svg",
+        "title":"Conception",
+        "description":"Requirement | Planning | Design"
+    }
+    ,
+    {
+        "id":2,
+        "icon":"./Terminal.svg",
+        "title":"Development",
+        "description":"Code | Module test | Integration test"
+    }
+    ,
+    {
+        "id":3,
+        "icon":"./Check circle.svg",
+        "title":"Commissioning",
+        "description":"FAT  |   SAT |  Training & Support"
+    }
+]

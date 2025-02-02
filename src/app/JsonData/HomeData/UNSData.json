@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Single source of truth",
+    "details": [
+      "Easy data access from offline or cloud",
+      "Reduce complexity",
+      "MQTT"
+    ]
+  },
+  {
+    "title": "Standardize",
+    "details": [
+      "Standardizes data formats & structures to ensure seamless communication across devices"
+    ]
+  },
+  {
+    "title": "AI",
+    "details": [
+      "AI integration",
+      "Innovative approach to industrial analytics"
+    ]
+  },
+  {
+    "title": "Quality Control & Inspection",
+    "details": [
+      "Defect Detection",
+      "Dimensional Measurement",
+      "Colour and Pattern Matching"
+    ]
+  },
+  {
+    "title": "Advanced Algorithms",
+    "details": [
+      "Detect patterns",
+      "Predict outcomes"
+    ]
+  }
+]
