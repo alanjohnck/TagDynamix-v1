@@ -15,29 +15,29 @@ const ScrollAnimation = () => {
   useEffect(() => {
     const frameCount = 250;
     const imageArray = [];
-
+  
     const loadImages = async () => {
-      for (let i = 0; i < frameCount; i++) {
+      for (let i = frameCount - 1; i >= 0; i--) {
         const img = new Image();
         img.src = `./alan/finalanimation${(i + 1)
           .toString()
           .padStart(4, "0")}.jpg`;
-
+  
         await new Promise((resolve) => setTimeout(resolve, 5));
-
+  
         imageArray.push(img);
-        setLoadingProgress(Math.round(((i + 1) / frameCount) * 100));
-
-        if (i === frameCount - 1) {
+        setLoadingProgress(Math.round(((frameCount - i) / frameCount) * 100));
+  
+        if (i === 0) {
           setLoading(false);
         }
       }
       setImages(imageArray);
     };
-
+  
     loadImages();
   }, []);
-
+  
   useEffect(() => {
     if (images.length === 0 || !canvasRef.current) return;
 
@@ -57,8 +57,8 @@ const ScrollAnimation = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
     
       // Draw image
-      const imageAspectRatio = 1920 / 1080;
-      const scale = 1;
+      const imageAspectRatio = 1980 / 1080;
+      const scale = 1.25;
       let scaledWidth = window.innerWidth * scale;
       let scaledHeight = scaledWidth / imageAspectRatio;
     
@@ -114,7 +114,7 @@ const ScrollAnimation = () => {
       <div id="scroll-container" className="h-[100vh] relative">
         <div className="h-screen flex items-center justify-center bg-black sticky top-0 overflow-hidden">
           {loading && (
-            <div className="w-screen h-screen absolute z-0 flex flex-col items-center justify-center text-white">
+            <div className="w-screen h-screen absolute z-20 flex flex-col items-center justify-center text-white">
               <div className="text-2xl mb-4">Loading images...</div>
               <div className="text-xl">{loadingProgress}%</div>
             </div>

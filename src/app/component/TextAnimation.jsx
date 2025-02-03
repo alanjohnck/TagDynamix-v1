@@ -2,7 +2,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import SplitType from 'split-type';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+import {ScrollTrigger} from 'gsap/dist/ScrollTrigger';
 
 const TextAnimation = forwardRef(({ 
   text,
