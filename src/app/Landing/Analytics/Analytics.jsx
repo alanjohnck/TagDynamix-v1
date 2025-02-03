@@ -11,9 +11,9 @@ function AnalyticsSection() {
         <div className='w-full px-6 pb-6 bg-white'>
             <div className='max-w-full h-fit flex flex-col items-center justify-start  rounded-b-lg bg-[#F6F5F8] text-black px-4 sm:px-6 lg:px-8'>
                 {/* Video Container */}
-                <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 m-0 p-0'>
+                <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 m-0 p-0 '>
                     <video 
-                        className='w-full h-auto lg:h-3/4 object-cover max-w-3xl' 
+                        className='w-full h-auto lg:h-3/4 object-cover max-w-3xl border-4 border-black' 
                         autoPlay 
                         loop 
                         muted
@@ -39,9 +39,9 @@ function AnalyticsSection() {
                         className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
                         scrollTriggerOptions={{
                             trigger: videoRef.current,
-                            start: "center center",
+                            start: "center top",
                             end: "bottom center",
-                            scrub: 1
+                            scrub: 3
                         }}
                         separator="."
                     />

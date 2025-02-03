@@ -4,31 +4,31 @@
             "id": "T01",
             "title": "Custom Visualization",
             "description": "Custom & scalable visualization on any platform, Optimized graphics & useful data, User friendly interface",
-            "icon":"./Pen tool.svg"
+            "icon":"./homeAssets/Pen tool.svg"
         },
         {
             "id": "T02",
             "title": "Migration",
             "description": "We migrate traditional HMI or SCADA into modern and high performance solution without any change in functionality",
-            "icon":"./Maximize 2.svg"
+            "icon":"../homeAssets/Maximize.svg"
         },
         {
             "id": "T03",
             "title": "Optimization",
             "description": "Transform slow performing HMI or SCADA into zero lag system",
-            "icon":"./Loader.svg"
+            "icon":"../homeAssets/Loader.svg"
         },
         {
             "id": "T04",
             "title": "Debugging",
             "description": "We reverse engineer the problem to identify root cause and implement a fix",
-            "icon":"./Check circle white.svg"
+            "icon":"../homeAssets/Check circle white.svg"
         },
         {
             "id": "T05",
             "title": "Assistance",
             "description": "Expert advice to derive a futuristic solution, Expert assistance in all technical areas of HMI, SCADA & MES systems",
-            "icon":"./User check.svg"
+            "icon":"../homeAssets/User check.svg"
         }
     ]
 }

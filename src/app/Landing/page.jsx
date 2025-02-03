@@ -3,13 +3,17 @@ import Hero from './Hero/Hero'
 import HMISection from './HMI/HMISection'
 import AnalyticsSection from './Analytics/Analytics'
 import Footer from '../component/Footer'
+import UNSSection from './UNS/UNS'
+import DynamicExpert from './DynamicExpert/DynamicExpert'
 
 function Landing() {
   return (
-    <div style={{ height: '300vh' }} >
+    <div  >
         <Hero />
         <HMISection />
         <AnalyticsSection />
+        <UNSSection />
+        <DynamicExpert />
         <Footer />
     </div>
   )

@@ -19,7 +19,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} display`}>
+      <body className={`${inter.variable} display overflow-x-hidden`}>
        <Navbar />
         <main>{children}</main>
        

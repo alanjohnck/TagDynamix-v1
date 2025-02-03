@@ -97,7 +97,7 @@ const ScrollAnimation = () => {
       scrollTrigger: {
         trigger: "#scroll-container",
         start: "top top",
-        end: "+=500%",
+        end: "+=600",
         scrub: 3,
         pin: true,
       },
@@ -110,7 +110,7 @@ const ScrollAnimation = () => {
   }, [images]);
 
   return (
-    <main className="overflow-x-hidden h-fit">
+    <main className="overflow-x-hidden">
       <div id="scroll-container" className="h-[100vh] relative">
         <div className="h-screen flex items-center justify-center bg-black sticky top-0 overflow-hidden">
           {loading && (

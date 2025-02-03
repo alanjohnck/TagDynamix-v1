@@ -27,6 +27,7 @@ const TextAnimation = forwardRef(({
     
     const words = splitText.words;
     const chars = splitText.chars;
+    const separatorElements = Array.from(textRef.current.querySelectorAll('.separator'));
 
     // Create timeline with scroll trigger
     const tl = gsap.timeline({
@@ -53,11 +54,13 @@ const TextAnimation = forwardRef(({
     });
 
     // Initial setup for separators
-    gsap.set('.separator', {
-      fontWeight: 200,
-      color: "grey",
-      fontSize: '0.8em'
-    });
+    if (separatorElements.length > 0) {
+      gsap.set(separatorElements, {
+        fontWeight: 200,
+        color: "grey",
+        fontSize: '0.8em'
+      });
+    }
 
     return () => {
       splitText.revert();
@@ -71,7 +74,7 @@ const TextAnimation = forwardRef(({
       <React.Fragment key={index}>
         <span>{part.trim()}</span>
         {index < array.length - 1 && (
-          <span className="separator  mx-2  font-thin">{separator}</span>
+          <span className="separator mx-2 font-thin">{separator}</span>
         )}
       </React.Fragment>
     ));
