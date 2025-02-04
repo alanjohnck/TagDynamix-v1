@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import IndustrialLoader from "./PreLoader";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -145,9 +146,8 @@ const ScrollAnimation = () => {
       <div id="scroll-container" className="h-[100vh] relative">
         <div className="h-screen flex items-center justify-center bg-black sticky top-0 overflow-hidden">
           {loading && (
-            <div className="w-screen h-screen absolute z-20 flex flex-col items-center justify-center text-white">
-              <div className="text-2xl mb-4">Loading images...</div>
-              <div className="text-xl">{loadingProgress}%</div>
+            <div className="w-screen h-screen absolute z-40 flex flex-col items-center justify-center text-white">
+               <IndustrialLoader />
             </div>
           )}
           <canvas ref={canvasRef} className=" z-0" />

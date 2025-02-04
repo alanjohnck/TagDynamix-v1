@@ -96,7 +96,7 @@ function Platform() {
           {/* Canary */}
           <div className="bg-white rounded-3xl shadow-sm p-6 flex items-center justify-center">
             <Image
-              src="/platform/Canary.svg"
+              src="/platform/canary.svg"
               alt="Canary"
               width={140}
               height={70}
