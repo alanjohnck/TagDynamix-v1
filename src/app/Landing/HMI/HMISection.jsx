@@ -10,7 +10,7 @@ function HMISection() {
     <div className='w-full h-fit px-6 pt-6 bg-white'>
         <div className='max-w-full h-fit flex flex-col items-center justify-start  rounded-t-lg bg-[#F6F5F8] text-black px-4 sm:px-6 lg:px-8'>
             {/* Video Container */}
-            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4  m-0 p-0 z-0 bg-[#F6F5F8] border-4 border-[#F6F5F8] '>
+            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4  m-0 p-0 z-0 bg-[#F6F5F8] border-4 border-[#F6F5F8] will-change-transform'>
                 <video 
                     className='w-full h-auto lg:h-3/4 object-cover max-w-3xl ' 
                     autoPlay 

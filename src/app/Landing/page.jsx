@@ -5,6 +5,8 @@ import AnalyticsSection from './Analytics/Analytics'
 import Footer from '../component/Footer'
 import UNSSection from './UNS/UNS'
 import DynamicExpert from './DynamicExpert/DynamicExpert'
+import Platform from './Platforms/Platforms'
+import InteractiveDashboard from './Dashboard/Dashboard'
 
 function Landing() {
   return (
@@ -14,6 +16,8 @@ function Landing() {
         <AnalyticsSection />
         <UNSSection />
         <DynamicExpert />
+        <InteractiveDashboard />
+        <Platform />  
         <Footer />
     </div>
   )

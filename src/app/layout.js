@@ -1,4 +1,3 @@
-
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./component/Navbar";
@@ -10,19 +9,81 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-
 export const metadata = {
-  title: "TagDynamix - Dynamic Tag Management Solutions",
-  description: "TagDynamix offers cutting-edge solutions for dynamic tag management, analytics, and optimization. Enhance your website's performance with our innovative tools.",
+  title: "TagDynamix - Industrial Automation & SCADA Solutions",
+  description: "Expert solutions in HMI, SCADA, and MES systems. Offering custom visualization, migration, optimization, and AI integration for industrial automation. Specialized in FactoryTalk, Ignition, WinCC, and more.",
+  keywords: [
+    "Industrial Automation",
+    "SCADA Systems",
+    "HMI Development",
+    "FactoryTalk Integration",
+    "Ignition Platform",
+    "WinCC Solutions",
+    "Industrial AI Integration",
+    "Custom Visualization",
+    "System Migration",
+    "Performance Optimization",
+    "Quality Control Systems",
+    "Industrial Analytics",
+    "MQTT Integration",
+    "Plant Automation",
+    "Manufacturing Execution Systems",
+    "Industrial IoT Solutions",
+    "Rockwell Software",
+    "Siemens Automation",
+    "AVEVA Solutions",
+    "Industrial Data Analytics"
+  ],
+  openGraph: {
+    title: "TagDynamix - Industrial Automation & SCADA Solutions",
+    description: "Transform your industrial operations with custom HMI/SCADA solutions, AI integration, and advanced analytics.",
+    type: "website",
+    locale: "en_US",
+    siteName: "TagDynamix",
+  },
+  twitter: {
+    title: "TagDynamix - Industrial Automation & SCADA Solutions",
+    description: "Expert solutions in industrial automation, SCADA systems, and MES integration.",
+  },
+  alternates: {
+    canonical: "https://tagdynamix.com",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+
+  classification: "Industrial Automation Software",
+  category: "Technology",
+  applicationName: "TagDynamix",
+  referrer: "origin-when-cross-origin",
+  other: {
+    "theme-color": "#ffffff",
+  },
+  authors: [
+    { name: "TagDynamix" },
+  ],
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className={`${inter.variable} display overflow-x-hidden`}>
-       <Navbar />
+        <Navbar />
         <main>{children}</main>
-       
       </body>
     </html>
   );

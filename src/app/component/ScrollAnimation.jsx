@@ -51,19 +51,19 @@ const ScrollAnimation = () => {
 
     updateCanvasSize();
     window.addEventListener("resize", updateCanvasSize);
-
+    
     const render = () => {
       if (!images[airpodsRef.current.frame]) return;
       context.clearRect(0, 0, canvas.width, canvas.height);
     
-      // Draw image
+      // Draw image with previous scaling logic
       const imageAspectRatio = 1980 / 1080;
-      const scale = 1.25;
-      let scaledWidth = window.innerWidth * scale;
+      const imageScale = 1.15;
+      let scaledWidth = window.innerWidth * imageScale;
       let scaledHeight = scaledWidth / imageAspectRatio;
     
       if (scaledHeight > window.innerHeight) {
-        scaledHeight = window.innerHeight * scale;
+        scaledHeight = window.innerHeight * imageScale;
         scaledWidth = scaledHeight * imageAspectRatio;
       }
     
@@ -72,20 +72,51 @@ const ScrollAnimation = () => {
     
       context.drawImage(images[airpodsRef.current.frame], x, y, scaledWidth, scaledHeight);
     
-      // Draw text
-      context.font = "bold 90px Arial";
-      context.fillStyle = "white";
+      // Enhanced Text Rendering
+      const texts = [
+        "High Performance UI", 
+        "Immersive 3D Engine", 
+        "Industrial AI Integration"
+      ];
+    
+      // Calculate progress and current text index
+      const progress = airpodsRef.current.frame / images.length;
+      const textIndex = Math.floor(progress * texts.length);
+      
+      // Advanced Text Styling
+      context.save();
+      context.font = "bold 72px 'Inter', sans-serif"; // Modern font
       context.textAlign = "center";
       context.textBaseline = "middle";
     
-      // Animate text visibility based on scroll progress
-      const textIndex = Math.floor((airpodsRef.current.frame / images.length) * 3); // 3 texts
-      const texts = ["High Performance UI", "Immersive 3D Engine Visualization", "Industrial AI Integration"];
-      
-      const alpha = Math.sin((airpodsRef.current.frame / images.length) * Math.PI);
-      context.globalAlpha = alpha; // Fade effect
-      context.fillText(texts[textIndex], canvas.width / 2, canvas.height / 2);
-      context.globalAlpha = 1; // Reset alpha
+      // Gradient Text Effect
+      const gradient = context.createLinearGradient(
+        0, canvas.height/2 - 50, 
+        0, canvas.height/2 + 50
+      );
+      gradient.addColorStop(0, "rgba(255,255,255,0.8)");
+      gradient.addColorStop(0.5, "rgba(135,206,235,0.9)"); // Skyblue with transparency
+      gradient.addColorStop(1, "rgba(255,255,255,0.8)");
+    
+      context.fillStyle = gradient;
+    
+      // Dynamic Text Animation
+      const textOpacity = Math.sin(progress * Math.PI * 2) * 0.5 + 0.5;
+      context.globalAlpha = textOpacity;
+    
+      // Add subtle text shadow for depth
+      context.shadowColor = 'rgba(0,0,0,0.5)';
+      context.shadowBlur = 10;
+      context.shadowOffsetX = 2;
+      context.shadowOffsetY = 2;
+    
+      // Draw text with perspective and scaling
+      const scale = 1 + Math.sin(progress * Math.PI * 2) * 0.1;
+      context.translate(canvas.width / 2, canvas.height / 2);
+      context.scale(scale, scale);
+      context.fillText(texts[textIndex], 0, 0);
+    
+      context.restore();
     };
     
     images[0].onload = render;
@@ -97,8 +128,8 @@ const ScrollAnimation = () => {
       scrollTrigger: {
         trigger: "#scroll-container",
         start: "top top",
-        end: "+=600",
-        scrub: 3,
+        end: "+=700",
+        scrub: 4,
         pin: true,
       },
       onUpdate: render,

@@ -10,7 +10,7 @@ function UNSSection() {
     return (
         <div className='max-w-full h-fit flex flex-col items-center justify-start border-b-2 bg-black text-white px-4 sm:px-6 lg:px-8'>
             {/* Video Container */}
-            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4'>
+            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 will-change-transform'>
             <video 
                 className='w-full h-auto lg:h-3/4 object-cover max-w-4xl' 
                 autoPlay 
