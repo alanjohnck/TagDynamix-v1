@@ -11,7 +11,7 @@ const TextAnimation = forwardRef(({
   staggers = [],
   className = "text-[3rem] md:text-6xl font-bold",
   scrollTriggerOptions = {},
-  separator = '.'
+  separator = ' '
 }, ref) => {
   const textRef = useRef(null);
 
@@ -36,7 +36,9 @@ const TextAnimation = forwardRef(({
         start: scrollTriggerOptions.start || "top center",
         end: scrollTriggerOptions.end || "bottom center",
         scrub: scrollTriggerOptions.scrub || 1,
-        toggleActions: "play pause reverse reset"
+        toggleActions: "play pause reverse reset",
+        pin:true,
+        
       }
     });
 

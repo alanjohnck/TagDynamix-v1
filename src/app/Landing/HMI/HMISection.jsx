@@ -10,21 +10,25 @@ function HMISection() {
     <div className='w-full h-fit px-6 pt-6 bg-white'>
         <div className='max-w-full h-fit flex flex-col items-center justify-start  rounded-t-lg bg-[#F6F5F8] text-black px-4 sm:px-6 lg:px-8'>
             {/* Video Container */}
-            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4  m-0 p-0 z-0 bg-[#F6F5F8] border-4 border-[#F6F5F8] will-change-transform'>
-                <video 
-                    className='w-full h-auto lg:h-3/4 object-cover max-w-3xl ' 
-                    autoPlay 
-                    loop 
-                    muted
-                    playsInline
-                    disablePictureInPicture
-                    style={{   border: 'none',  outline: 'none', borderRadius: '8px',background:'transparent',mixBlendMode:'normal', }}
-
-                >
-                    <source src="./animations/animation1effect.webm" type="video/webm" />
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 m-0 p-0 z-0 bg-[#F6F5F8] overflow-hidden will-change-transform'>
+    <video 
+        className='w-full h-auto lg:h-3/4 object-cover max-w-3xl rounded-lg' 
+        autoPlay 
+        loop 
+        muted
+        playsInline
+        disablePictureInPicture
+        style={{   
+            border: 'none',  
+            outline: 'none', 
+            background:'transparent',
+            mixBlendMode:'normal', 
+        }}
+    >
+        <source src="./animations/animation1effect.webm" type="video/webm" />
+        Your browser does not support the video tag.
+    </video>
+</div>
 
             {/* Text Animation Container */}
             <div className='w-full h-auto lg:h-1/4 flex flex-col gap-4 items-center justify-center py-8 md:py-12'>
@@ -50,7 +54,7 @@ function HMISection() {
             {/* Framework Technology Section */}
             <div className='w-full h-auto lg:h-1/4 p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row'>
                 <div className='w-full lg:w-1/4 mb-6 lg:mb-0 flex items-start lg:items-center justify-start'>
-                    <h3 className='font-bold text-xl sm:text-2xl text-left text-[#A40F0F]'>
+                    <h3 className='font-bold text-xl sm:text-2xl text-left text-[black]'>
                         10x Faster <br /> Framework
                     </h3>
                 </div>

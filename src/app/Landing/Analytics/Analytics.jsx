@@ -29,7 +29,7 @@ function AnalyticsSection() {
                 {/* Text Animation Container */}
                 <div className='w-full h-auto lg:h-1/4 flex flex-col gap-4 items-center justify-center py-8 md:py-12'>
                     <h4 className='font-medium text-base sm:text-lg md:text-xl text-center'>
-                        Visualize
+                    Collect, Store and Analyse
                     </h4>
                     <TextAnimation 
                         text="HISTORIAN | DATA ANALYTICS"
@@ -50,14 +50,15 @@ function AnalyticsSection() {
                 {/* Framework Technology Section */}
                 <div className='w-full h-auto lg:h-1/4 p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row'>
                     <div className='w-full lg:w-1/4 mb-6 lg:mb-0 flex items-start lg:items-center justify-start'>
-                        <h3 className='font-bold text-xl sm:text-2xl text-left text-[#A40F0F]'>
+                        <h3 className='font-bold text-xl sm:text-2xl text-left text-[black]'>
                         Accelerate <br /> Decision Making
                         </h3>
                     </div>
                     <div className='w-full lg:w-3/4 flex flex-col md:flex-row gap-6 md:gap-8'>
                         {AnalyticsData.slice(0, 3).map((data, index) => (
                             <div key={index} className='flex flex-col justify-start items-start gap-4 flex-1'>
-                                <h2 className='text-lg sm:text-xl font-bold'>{data.title}</h2>
+                            {data.title==="Meaningful data" ? <h2 className='text-lg sm:text-xl text-[#A905D1] font-bold'>{data.title}</h2> :  <h2 className='text-lg sm:text-xl font-bold'>{data.title}</h2>
+                        }
                                 <div className='flex flex-col gap-2'>
                                     {data.details.map((detail, i) => (
                                         <p key={i} className='text-gray-600 text-sm sm:text-base'>
