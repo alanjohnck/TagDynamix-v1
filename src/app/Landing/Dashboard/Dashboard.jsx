@@ -8,7 +8,6 @@ import AlarmMonitoring from '@/app/component/DashboardComponents/AlarmPage';
 import HomePanel from '@/app/component/DashboardComponents/HomePanel';
 import DashboardContent from '@/app/component/DashboardComponents/SettingsPanel';
 
-
 const InteractiveDashboard = () => {
   const [showLeftSidebar, setShowLeftSidebar] = useState(false);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
@@ -87,25 +86,27 @@ const InteractiveDashboard = () => {
       case 'settings':
         return <DashboardContent activeSection="settings" />;
       case 'statistics':
-        return  <BarChartPanel />
+        return <BarChartPanel />;
       case 'trend':
         return <TrendChart />;
       case 'alarms':
-        return <AlarmMonitoring /> ;
+        return <AlarmMonitoring />;
       case 'stations':
-        return <div className='w-full h-full bg-white rounded-lg shadow-sm mx-12 flex items-start justify-center py-4'>
-          <img className='w-[90%]' src="./homeAssets/stationscreen.svg" alt="Station Screen" />
-        </div>;
+        return (
+          <div className='w-full h-full bg-white rounded-lg shadow-sm mx-12 flex items-start justify-center py-4'>
+            <img className='w-[90%]' src="./homeAssets/stationscreen.svg" alt="Station Screen" />
+          </div>
+        );
       default:
-        return <HomePanel /> ;
+        return <HomePanel />;
     }
   };
 
   return (
-    <div className='hidden md:flex w-full h-screen bg-black  flex-col items-center justify-center '>
-      <div className="w-full max-w-7xl h-[85vh]  bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
-        {/* Dashboard Header */}
-        <header className="h-16 flex-shrink-0 bg-white border-b border-gray-200 flex items-center justify-between px-4 shadow-md rounded-t-lg">
+  <div className='hidden md:flex w-full h-[100vh] bg-black flex-col items-center justify-center'>
+     <div className="w-full max-w-7xl h-[95vh] 2xl:h-[75vh] bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
+{/* Dashboard Header */}
+        <header className="h-16 flex-shrink-0  border-b border-gray-200 bg-[#DEDEDE] flex items-center justify-between px-4 shadow-md rounded-t-lg">
           <div className="w-[10rem] flex items-center gap-4">
             <button 
               onClick={() => setShowLeftSidebar(!showLeftSidebar)}
@@ -115,7 +116,7 @@ const InteractiveDashboard = () => {
             </button>
             <div className='w-1/2'>
               <span className="text-sm font-medium">
-              {currentContent.charAt(0).toUpperCase() + currentContent.slice(1)}
+                {currentContent.charAt(0).toUpperCase() + currentContent.slice(1)}
               </span>
             </div>
             <span><People /></span>
@@ -145,11 +146,10 @@ const InteractiveDashboard = () => {
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex relative h-[calc(100vh-12rem)]">
+        <div className="flex-1 flex relative">
           {/* Left Sidebar */}
           <div 
-            className={`absolute lg:relative w-64 h-auto bg-white shadow-md transform transition-transform duration-300 ease-in-out z-20
+            className={`absolute lg:relative w-64 h-screen bg-white shadow-md transform transition-transform duration-300 ease-in-out z-20
               ${showLeftSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
           >
             <div className="p-4 flex justify-between items-center border-b">
@@ -180,8 +180,8 @@ const InteractiveDashboard = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 overflow-auto bg-white">
-            <div className="w-full h-full flex justify-center">
+          <div className="flex flex-1 justify-center  overflow-auto bg-white">
+            <div className="w-full h-3/4 flex justify-center items-start">
               {getContentForSection(currentContent)}
             </div>
           </div>
@@ -214,8 +214,6 @@ const InteractiveDashboard = () => {
           )}
         </div>
       </div>
-
-     
     </div>
   );
 };

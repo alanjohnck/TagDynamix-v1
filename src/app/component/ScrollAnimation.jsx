@@ -12,25 +12,37 @@ const ScrollAnimation = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const frameCount = 250;
+    const updateDeviceType = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", updateDeviceType);
+    return () => window.removeEventListener("resize", updateDeviceType);
+  }, []);
+
+  useEffect(() => {
+    const frameCount = 280;
     const imageArray = [];
+    const imagePrefix = isMobile ? "mobile" : "desktop"; // Choose image type
 
     const loadImages = async () => {
-      for (let i = frameCount - 1; i >= 0; i--) {
+      for (let i = 1; i < frameCount - 1; i++) {
         const img = new Image();
-        img.src = `./alan/TDlandingPage${(i + 1)
+        img.src = `./ImageSequence/${imagePrefix}/TDlandingPage${(i + 1)
           .toString()
           .padStart(4, "0")}.jpg`;
 
-        await new Promise((resolve) => setTimeout(resolve, 5));
+        await new Promise((resolve) => {
+          img.onload = resolve;
+        });
 
         imageArray.push(img);
-        setLoadingProgress(Math.round(((frameCount - i) / frameCount) * 100));
-
-        if (i === 0) {
+        setLoadingProgress(Math.round(((i + 1) / frameCount) * 100)); // Update progress correctly
+        if (i === frameCount - 2) {
           setLoading(false);
         }
       }
@@ -38,7 +50,7 @@ const ScrollAnimation = () => {
     };
 
     loadImages();
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     if (images.length === 0 || !canvasRef.current) return;
@@ -59,8 +71,8 @@ const ScrollAnimation = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
     
       // Image Scaling
-      const imageAspectRatio = 1980 / 1080;
-      const imageScale = 1;
+      const imageAspectRatio = isMobile ? 1080 / 1920 : 1980 / 1080; // Adjust based on mobile or desktop
+      const imageScale = 1.15;
       let scaledWidth = window.innerWidth * imageScale;
       let scaledHeight = scaledWidth / imageAspectRatio;
     
@@ -79,31 +91,43 @@ const ScrollAnimation = () => {
       let textArray = [];
       if (frame >= 3 && frame <= 50) textArray = ["High", "Performance", "UI"];
       if (frame >= 105 && frame <= 150) textArray = ["Immersive", "3D", "Engine"];
-      if (frame >= 200 && frame <= 280) textArray = ["Industrial", "AI", "Integration"];
+      if (frame >= 200 && frame <= 250) textArray = ["Industrial", "AI", "Integration"];
     
-      const wordSpacing = 220; // Spacing between words
-      const baseX = canvas.width / 2 - (textArray.length * wordSpacing) / 2; // Center alignment
-      const yPosition = canvas.height / 2;
+      const wordSpacing = isMobile ? 0 : 350; // No horizontal spacing for mobile
+      const baseX = canvas.width / 2 -(isMobile?0:250); // Center the words horizontally
+      const yPosition = canvas.height / 2 - (isMobile ? 150 : 200); // Adjust text position
     
-      const visibleWordsCount = Math.floor((frame % 50) / 15); // Delayed word reveal
-      const wordsToDisplay = textArray.slice(0, visibleWordsCount + 1);
+      // For mobile, stack the words vertically
+      let visibleWordsCount = Math.floor((frame % 50) / 15);
+      let wordsToDisplay = textArray.slice(0, visibleWordsCount + 1);
     
-      if (wordsToDisplay.length > 0) {
-        context.save();
-        context.font = "bold 72px 'Inter', sans-serif";
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-    
+      if (isMobile) {
         wordsToDisplay.forEach((word, index) => {
           const isHighlighted = ["UI", "3D", "AI"].includes(word);
+          context.save();
+          context.font = `bold 36px 'Inter', sans-serif`;
           context.fillStyle = isHighlighted ? "#ed5729" : "white";
-          context.fillText(word, baseX + index * (wordSpacing + 120), yPosition);
+          context.textAlign = "center";
+          context.textBaseline = "top";
+          context.fillText(word, baseX, yPosition + index * 50); // Vertical stacking of words in mobile
+          context.restore();
         });
-    
-        context.restore();
+      } else {
+        // For desktop, display words horizontally in one line
+        wordsToDisplay.forEach((word, index) => {
+          const isHighlighted = ["UI", "3D", "AI"].includes(word);
+          context.save();
+          context.font = `bold 72px 'Inter', sans-serif`;
+          context.fillStyle = isHighlighted ? "#ed5729" : "white";
+          context.textAlign = "center";
+          context.textBaseline = "middle";
+          context.fillText(word, baseX + index * wordSpacing, yPosition); // Horizontal arrangement for desktop
+          context.restore();
+        });
       }
     };
     
+
     images[0].onload = render;
 
     gsap.to(airpodsRef.current, {
@@ -113,8 +137,8 @@ const ScrollAnimation = () => {
       scrollTrigger: {
         trigger: "#scroll-container",
         start: "top top",
-        end: "+=700",
-        scrub: 4,
+        end: "+=600",
+        scrub: 6,
         pin: true,
       },
       onUpdate: render,
@@ -135,6 +159,11 @@ const ScrollAnimation = () => {
             </div>
           )}
           <canvas ref={canvasRef} className="z-0" />
+          {loadingProgress < 100 && (
+            <div className="absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
+              {loadingProgress}%
+            </div>
+          )}
         </div>
       </div>
     </main>

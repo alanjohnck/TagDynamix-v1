@@ -8,7 +8,7 @@ function AnalyticsSection() {
     const videoRef = useRef(null);
 
     return (
-        <div className='w-full px-6 pb-6 bg-white'>
+        <div className='w-full px-6 pb-10 bg-white'>
             <div className='max-w-full h-fit flex flex-col items-center justify-start  rounded-b-lg bg-[#F6F5F8] text-black px-4 sm:px-6 lg:px-8'>
                 {/* Video Container */}
                 <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 m-0 p-0 '>

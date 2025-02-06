@@ -5,12 +5,12 @@ import TextAnimation from '@/app/component/TextAnimation'
 import UNSData from "../../JsonData/HomeData/UNSData.json"
 
 function UNSSection() {
-    const videoRef = useRef(null)
-    
+    const unsRef = useRef(null)
+    const visionRef = useRef(null)
     return (
         <div className='max-w-full h-fit flex flex-col items-center justify-start border-b-2 bg-black text-white px-4 sm:px-6 lg:px-8'>
             {/* Video Container */}
-            <div ref={videoRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 will-change-transform'>
+            <div ref={unsRef} className='w-full md:w-4/5 lg:w-fit h-auto lg:h-1/2 flex flex-col justify-end px-4 will-change-transform'>
             <video 
                 className='w-full h-auto lg:h-3/4 object-cover max-w-4xl' 
                 autoPlay 
@@ -36,7 +36,7 @@ function UNSSection() {
                     staggers={[0.3, 0.3, 0.1]}
                     className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
                     scrollTriggerOptions={{
-                        trigger: videoRef.current,
+                        trigger: unsRef.current,
                         start: "center top",
                         end: "bottom center",
                         scrub: 3
@@ -70,7 +70,20 @@ function UNSSection() {
 
             {/* Vision System*/}
             <div className='w-full h-auto lg:h-1/4 flex flex-col gap-4 items-center justify-center py-8 md:py-12'>
-                   <h1 className='text-3xl sm:text-3xl md:text-6xl font-medium text-center'>VISION SYSTEM</h1>
+             <TextAnimation 
+                    text="VISION SYSTEM"
+                    colors={["white", "red", "white"]}
+                    durations={[0.5, 0.1, 0.5]}
+                    staggers={[0.3, 0.3, 0.1]}
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
+                    scrollTriggerOptions={{
+                        trigger: visionRef.current,
+                        start: "center top",
+                        end: "bottom bottom",
+                        scrub: 3
+                    }}
+                    separator="."
+                />
             </div>
             <div className='w-full h-auto lg:h-1/4 p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row'>
                 <div className='w-full lg:w-1/4 mb-6 lg:mb-0 flex items-start lg:items-center justify-start'>

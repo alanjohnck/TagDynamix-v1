@@ -45,7 +45,7 @@ function Navbar() {
           <Link href="/Pricing" className="hover:text-gray-300 transition-colors">
             Pricing
           </Link>
-          <Link href="https://cal.com/tagdynamix-qaoozn/secret" className="hover:text-gray-300 transition-colors">
+          <Link href="/Contact" className="hover:text-gray-300 transition-colors">
             Contact
           </Link>
         </div>
