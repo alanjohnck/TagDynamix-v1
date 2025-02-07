@@ -36,9 +36,8 @@ const TextAnimation = forwardRef(({
         start: scrollTriggerOptions.start || "top center",
         end: scrollTriggerOptions.end || "bottom center",
         scrub: scrollTriggerOptions.scrub || 1,
-        toggleActions: "play pause reverse reset",
-        pin:true,
-        
+        markers:true,
+        id: "text-animation", // Unique ID to track
       }
     });
 

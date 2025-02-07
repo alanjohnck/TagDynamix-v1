@@ -13,14 +13,14 @@ const TextSequence = ({ words, isVisible, highlighted }) => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.1
+        staggerChildren: 0.15,
+        delayChildren: 0.0
       }
     },
     exit: {
       opacity: 0,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.15,
         staggerDirection: -1
       }
     }
@@ -33,13 +33,16 @@ const TextSequence = ({ words, isVisible, highlighted }) => {
       opacity: 1,
       transition: {
         type: "spring",
-        damping: 12,
-        stiffness: 100
+        damping: 15,
+        stiffness: 120
       }
     },
     exit: { 
       y: -20, 
-      opacity: 0
+      opacity: 0,
+      transition: {
+        duration: 0.2
+      }
     }
   };
 
@@ -57,7 +60,7 @@ const TextSequence = ({ words, isVisible, highlighted }) => {
             <motion.span
               key={word}
               variants={item}
-              className={`text-6xl font-bold ${
+              className={`text-2xl md:text-6xl font-medium md:font-bold ${
                 highlighted.includes(word) ? 'text-[#ed5729]' : 'text-white'
               }`}
             >
@@ -75,6 +78,7 @@ const ScrollAnimation = () => {
   const airpodsRef = useRef({ frame: 0 });
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentSequence, setCurrentSequence] = useState(null);
@@ -86,100 +90,109 @@ const ScrollAnimation = () => {
     {
       words: ["High", "Performance", "UI"],
       highlighted: ["UI"],
-      frameRange: [15, 60]
+      frameRange: [2, 50]
     },
     {
       words: ["Immersive", "3D", "Engine"],
       highlighted: ["3D"],
-      frameRange: [105, 180]
+      frameRange: [94, 186]
     },
     {
       words: ["Industrial", "AI", "Integration"],
       highlighted: ["AI"],
-      frameRange: [200, 250]
+      frameRange: [187, 279]
     }
   ], []);
 
-  // Optimized device type detection
+  // Improved device detection with immediate check
   useEffect(() => {
     const checkDevice = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      return mobile;
     };
     
-    checkDevice();
+    const isMobileDevice = checkDevice();
     const debouncedResize = debounce(checkDevice, 250);
     window.addEventListener("resize", debouncedResize);
+    
+    // Preload first few images immediately for faster initial render
+    const preloadInitialImages = async () => {
+      const imagePrefix = isMobileDevice ? "mobile" : "desktop";
+      const initialImages = [1, 2, 3].map(i => {
+        const img = new Image();
+        img.src = `./ImageSequence/${imagePrefix}/TDlandingPage${i.toString().padStart(4, "0")}.jpg`;
+        return img;
+      });
+      await Promise.all(initialImages.map(img => new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      })));
+    };
+
+    preloadInitialImages();
+
     return () => {
       window.removeEventListener("resize", debouncedResize);
       debouncedResize.cancel();
     };
   }, []);
 
-  // Optimized image loading
+  // Improved image loading with better progress tracking and error handling
   useEffect(() => {
     const frameCount = 280;
     const imagePrefix = isMobile ? "mobile" : "desktop";
     let mounted = true;
-    const imagePromises = [];
     const imageArray = new Array(frameCount - 2);
     loadedImagesCount.current = 0;
 
-    // Create image loading promises in chunks
-    const loadImageChunk = async (startIdx, endIdx) => {
-      for (let i = startIdx; i < endIdx && i < frameCount - 1; i++) {
-        const img = new Image();
-        const promise = new Promise((resolve, reject) => {
-          img.onload = () => {
-            if (mounted) {
-              loadedImagesCount.current++;
-              imageArray[i - 1] = img;
-              resolve();
-            }
-          };
-          img.onerror = reject;
-        });
-
-        img.src = `./ImageSequence/${imagePrefix}/TDlandingPage${(i + 1)
-          .toString()
-          .padStart(4, "0")}.jpg`;
-        imagePromises.push(promise);
-      }
-    };
-
-    // Load images in chunks of 20
-    const chunkSize = 20;
-    const loadAllChunks = async () => {
-      for (let i = 1; i < frameCount - 1; i += chunkSize) {
-        await loadImageChunk(i, i + chunkSize);
-        if (loadedImagesCount.current >= frameCount - 2) {
-          break;
-        }
-      }
-
+    const loadImage = async (index) => {
       try {
-        await Promise.all(imagePromises);
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = `./ImageSequence/${imagePrefix}/TDlandingPage${(index + 1)
+            .toString()
+            .padStart(4, "0")}.jpg`;
+        });
         if (mounted) {
-          setImages(imageArray.filter(Boolean));
-          setImagesLoaded(true);
-          setLoading(false);
-          touchEnabled.current = false; // Disable touch events after loading
+          imageArray[index - 1] = img;
+          loadedImagesCount.current++;
+          setLoadingProgress((loadedImagesCount.current / (frameCount - 2)) * 100);
         }
       } catch (error) {
-        console.error("Error loading images:", error);
-        if (mounted) {
-          setLoading(false);
-        }
+        console.error(`Error loading image ${index}:`, error);
       }
     };
 
-    loadAllChunks();
+    const loadImagesInBatches = async () => {
+      const batchSize = 10;
+      for (let i = 1; i < frameCount - 1; i += batchSize) {
+        if (!mounted) break;
+        
+        const batch = Array.from({ length: Math.min(batchSize, frameCount - 1 - i) }, 
+          (_, index) => loadImage(i + index));
+        
+        await Promise.all(batch);
+      }
+
+      if (mounted) {
+        setImages(imageArray.filter(Boolean));
+        setImagesLoaded(true);
+        setLoading(false);
+        touchEnabled.current = false;
+      }
+    };
+
+    loadImagesInBatches();
 
     return () => {
       mounted = false;
     };
   }, [isMobile]);
 
-  // Canvas and animation setup
+  // Improved scroll animation setup
   useEffect(() => {
     if (!imagesLoaded || !canvasRef.current) return;
 
@@ -194,8 +207,10 @@ const ScrollAnimation = () => {
     updateCanvasSize();
     window.addEventListener("resize", updateCanvasSize);
 
-    const render = throttle(() => {
+    let rafId = null;
+    const render = () => {
       if (!images[airpodsRef.current.frame]) return;
+      
       context.clearRect(0, 0, canvas.width, canvas.height);
     
       const imageAspectRatio = isMobile ? 1080 / 1920 : 1980 / 1080;
@@ -219,44 +234,55 @@ const ScrollAnimation = () => {
       );
       
       setCurrentSequence(sequence);
-    }, 16); // Throttle to ~60fps
+    };
 
-    images[0] && render();
-
+    // Slower, smoother scroll animation
     const scrollAnimation = gsap.to(airpodsRef.current, {
       frame: images.length - 1,
       snap: "frame",
-      ease: "power1.inOut",
+      ease: "power1.inOut", // Smoother easing
       scrollTrigger: {
         trigger: "#scroll-container",
-        start: "top top",
-        end: "+=100%",
-        scrub: 6,
+        start: "top top ",
+        end: "+=100% ", // Increased scroll length for smoother animation
+        scrub: 2.5, // Increased scrub time for smoother scrolling
+        id: "video-animation", // Unique ID to track
+        markers:true,
         pin: true,
+        anticipatePin: 1,
+        preventOverlaps: true,
+        onUpdate: (self) => {
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(render);
+        },
+        onLeave: () => {
+          // Cleanup when leaving the section
+          if (rafId) cancelAnimationFrame(rafId);
+        }
       },
-      onUpdate: render,
     });
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("resize", updateCanvasSize);
       updateCanvasSize.cancel();
-      render.cancel();
       scrollAnimation.kill();
     };
   }, [imagesLoaded, images, sequences, isMobile]);
 
   return (
-    <main className="overflow-x-hidden">
+    <main className="overflow-x-hidden overflow-y-hidden bg-black  ">
       <div 
         ref={containerRef} 
         id="scroll-container" 
         className="h-[100vh] relative"
         style={{ touchAction: touchEnabled.current ? 'none' : 'auto' }}
       >
-        <div className="h-screen flex items-center justify-center bg-black sticky top-0 overflow-hidden">
+        <div className="sticky top-0 h-screen flex items-center justify-center bg-black overflow-hidden">
           {loading && (
             <div className="w-screen h-screen absolute z-40 flex flex-col items-center justify-center text-white">
-              <IndustrialLoader />
+              <IndustrialLoader progress={loadingProgress} />
+              <div className="mt-4 text-lg">Loading: {Math.round(loadingProgress)}%</div>
             </div>
           )}
           <canvas ref={canvasRef} className="z-0" />
