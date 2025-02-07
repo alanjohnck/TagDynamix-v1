@@ -36,7 +36,6 @@ const TextAnimation = forwardRef(({
         start: scrollTriggerOptions.start || "top center",
         end: scrollTriggerOptions.end || "bottom center",
         scrub: scrollTriggerOptions.scrub || 1,
-        markers:true,
         id: "text-animation", // Unique ID to track
       }
     });

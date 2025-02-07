@@ -104,7 +104,7 @@ const InteractiveDashboard = () => {
 
   return (
   <div className='hidden md:flex w-full h-[100vh] bg-black flex-col items-center justify-center'>
-     <div className="w-full max-w-7xl h-[95vh] 2xl:h-[75vh] bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
+     <div className="w-full max-w-7xl h-[95vh] 2xl:h-[80vh] bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
 {/* Dashboard Header */}
         <header className="h-16 flex-shrink-0  border-b border-gray-200 bg-[#DEDEDE] flex items-center justify-between px-4 shadow-md rounded-t-lg">
           <div className="w-[10rem] flex items-center gap-4">

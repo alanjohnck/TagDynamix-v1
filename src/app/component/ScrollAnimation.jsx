@@ -247,7 +247,6 @@ const ScrollAnimation = () => {
         end: "+=100% ", // Increased scroll length for smoother animation
         scrub: 2.5, // Increased scrub time for smoother scrolling
         id: "video-animation", // Unique ID to track
-        markers:true,
         pin: true,
         anticipatePin: 1,
         preventOverlaps: true,
