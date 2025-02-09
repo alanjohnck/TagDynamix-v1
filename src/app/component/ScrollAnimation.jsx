@@ -107,7 +107,7 @@ const SectionedImageScroller = () => {
   const currentSectionData = sections[currentSection] || { title: "", highlight: "" };
 
   return (
-    <div className="h-[400vh]">
+    <div className="h-[300vh]">
       {/* Loader */}
       {loading && (
         <div
