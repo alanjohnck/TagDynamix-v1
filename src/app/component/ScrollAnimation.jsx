@@ -23,6 +23,19 @@ const SectionedImageScroller = () => {
   const loaderRef = useRef(null);
   const scrollHintRef = useRef(null);
   const isAnimating = useRef(false);
+  const imageCache = useRef([]);
+
+  const preloadImages = async () => {
+    const promises = [];
+    for (let i = 1; i <= totalFrames; i++) {
+      const img = new Image();
+      img.src = `/ImageSequence/desktop/TDlandingPage${i.toString().padStart(4, "0")}.jpg`;
+      imageCache.current[i] = img;
+      promises.push(new Promise((resolve) => (img.onload = resolve)));
+    }
+    await Promise.all(promises);
+    setLoading(false); // Hide loader after preloading
+  };
 
   const playSection = (sectionIndex, reverse = false) => {
     if (isAnimating.current || sectionIndex < 0 || sectionIndex >= sections.length) return;
@@ -74,6 +87,8 @@ const SectionedImageScroller = () => {
   }, []);
 
   useEffect(() => {
+    preloadImages();
+
     gsap.to(loaderRef.current, {
       opacity: 0,
       duration: 1.2,
@@ -86,8 +101,6 @@ const SectionedImageScroller = () => {
       { opacity: 0, y: 10 },
       { opacity: 1, y: 0, repeat: -1, yoyo: true, duration: 1.2, ease: "power1.inOut" }
     );
-
-    playSection(0);
 
     return () => {
       gsap.killTweensOf(frameRef);
