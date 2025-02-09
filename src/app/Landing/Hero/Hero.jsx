@@ -3,7 +3,7 @@ import React from 'react'
 
 function Hero() {
   return (
-    <div className='h-auto'>
+    <div className='h-fit'>
         <ScrollAnimation />
     </div>
   )

@@ -33,7 +33,7 @@ const TextAnimation = forwardRef(({
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: scrollTriggerOptions.trigger || textRef.current,
-        start: scrollTriggerOptions.start || "top center",
+        start: scrollTriggerOptions.start || "top top",
         end: scrollTriggerOptions.end || "bottom center",
         scrub: scrollTriggerOptions.scrub || 1,
         id: "text-animation", // Unique ID to track

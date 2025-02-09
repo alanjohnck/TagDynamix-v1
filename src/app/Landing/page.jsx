@@ -13,7 +13,6 @@ function Landing() {
   return (
     <div  >
         <Hero />
-        <div />
         <HMISection />
         <AnalyticsSection />
         <UNSSection />

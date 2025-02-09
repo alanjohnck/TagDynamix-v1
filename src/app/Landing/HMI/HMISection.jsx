@@ -43,7 +43,7 @@ function HMISection() {
                     className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
                     scrollTriggerOptions={{
                         trigger: videoRef.current,
-                        start: "top top",
+                        start: "center top",
                         end: "bottom center",
                         scrub: 3
                     }}

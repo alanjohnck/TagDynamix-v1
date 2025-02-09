@@ -37,7 +37,7 @@ function UNSSection() {
                     className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
                     scrollTriggerOptions={{
                         trigger: unsRef.current,
-                        start: "center top",
+                        start: "top top",
                         end: "bottom center",
                         scrub: 3
                     }}
@@ -78,7 +78,7 @@ function UNSSection() {
                     className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
                     scrollTriggerOptions={{
                         trigger: visionRef.current,
-                        start: "center top",
+                        start: "top top",
                         end: "bottom bottom",
                         scrub: 3
                     }}

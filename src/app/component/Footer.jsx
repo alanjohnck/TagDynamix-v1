@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 h-3/4">
         {/* Top branding */}
         <div className="pt-8 items-center flex justify-center">
-          <img src="./logo.svg" className=" w-24 md:w-25 h-20 -translate-x-[43.5%] md:-translate-x-[73.5%]" alt="Logo" />
+          <img src="./logo.svg" className="w-25 h-20 -translate-x-[43.5%] md:-translate-x-[73.5%]" alt="Logo" />
         </div>
 
         {/* Text wrapper with relative positioning */}
