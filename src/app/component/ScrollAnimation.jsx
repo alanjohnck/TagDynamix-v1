@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import Image from "next/image";
 
 const SectionedImageScroller = () => {
   const totalFrames = 280;
@@ -15,8 +16,9 @@ const SectionedImageScroller = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [showText, setShowText] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [imageSrc, setImageSrc] = useState(`/ImageSequence/desktop/TDlandingPage0001.jpg`);
+
   const frameRef = useRef(1);
-  const imageRef = useRef(null);
   const textRef = useRef(null);
   const loaderRef = useRef(null);
   const scrollHintRef = useRef(null);
@@ -37,10 +39,8 @@ const SectionedImageScroller = () => {
       duration: 3.5,
       ease: "power2.inOut",
       onUpdate: () => {
-        if (imageRef.current) {
-          const frameNum = Math.round(frameRef.current);
-          imageRef.current.src = `ImageSequence/desktop/TDlandingPage${frameNum.toString().padStart(4, "0")}.jpg`;
-        }
+        const frameNum = Math.round(frameRef.current);
+        setImageSrc(`/ImageSequence/desktop/TDlandingPage${frameNum.toString().padStart(4, "0")}.jpg`);
       },
       onComplete: () => {
         isAnimating.current = false;
@@ -65,7 +65,7 @@ const SectionedImageScroller = () => {
       });
     };
 
-    const options = { passive: false }; // Fix preventDefault issue
+    const options = { passive: false };
     window.addEventListener("wheel", handleScroll, options);
 
     return () => {
@@ -110,32 +110,29 @@ const SectionedImageScroller = () => {
     <div className="h-[300vh]">
       {/* Loader */}
       {loading && (
-        <div
-          ref={loaderRef}
-          className="fixed inset-0 flex items-center justify-center bg-black z-50"
-        >
+        <div ref={loaderRef} className="fixed inset-0 flex items-center justify-center bg-black z-50">
           <div className="text-white text-3xl font-bold">Loading...</div>
         </div>
       )}
 
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex justify-center items-center bg-black">
-        {/* Image Frame */}
-        <img ref={imageRef} src={null} alt="Frame" className="w-full h-full object-cover" />
+        {/* Image Frame with Next.js <Image /> */}
+        <Image
+          src={imageSrc}
+          alt="Frame"
+          layout="fill"
+          objectFit="cover"
+          priority
+        />
 
         {/* Scroll Down Indicator */}
-        <div
-          ref={scrollHintRef}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-lg"
-        >
+        <div ref={scrollHintRef} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-lg">
           ↓ Scroll Down ↓
         </div>
 
         {/* Animated Text */}
         {showText && (
-          <div
-            ref={textRef}
-            className="absolute top-[20%] left-0 right-0 px-12 text-center opacity-0"
-          >
+          <div ref={textRef} className="absolute top-[20%] left-0 right-0 px-12 text-center opacity-0">
             <h1 className="text-7xl font-bold text-white mb-4">
               {currentSectionData.title} <span className="text-orange-600">{currentSectionData.highlight}</span>
             </h1>
