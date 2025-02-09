@@ -34,7 +34,7 @@ const SectionedImageScroller = () => {
 
     gsap.to(frameRef, {
       current: endFrame,
-      duration: 1.5,
+      duration: 3.5,
       ease: "power2.inOut",
       onUpdate: () => {
         if (imageRef.current) {
@@ -51,22 +51,29 @@ const SectionedImageScroller = () => {
     setCurrentSection(sectionIndex);
   };
 
-  const handleScroll = (event) => {
-    event.preventDefault();
-    if (isAnimating.current) return;
+  useEffect(() => {
+    const handleScroll = (event) => {
+      if (isAnimating.current) return;
+      const isScrollingDown = event.deltaY > 0;
 
-    const isScrollingDown = event.deltaY > 0;
-    setCurrentSection((prev) => {
-      let newSection = isScrollingDown ? prev + 1 : prev - 1;
-      if (newSection < 0 || newSection >= sections.length) return prev;
+      setCurrentSection((prev) => {
+        let newSection = isScrollingDown ? prev + 1 : prev - 1;
+        if (newSection < 0 || newSection >= sections.length) return prev;
 
-      playSection(newSection, !isScrollingDown);
-      return newSection;
-    });
-  };
+        playSection(newSection, !isScrollingDown);
+        return newSection;
+      });
+    };
+
+    const options = { passive: false }; // Fix preventDefault issue
+    window.addEventListener("wheel", handleScroll, options);
+
+    return () => {
+      window.removeEventListener("wheel", handleScroll, options);
+    };
+  }, []);
 
   useEffect(() => {
-    // Loader Animation
     gsap.to(loaderRef.current, {
       opacity: 0,
       duration: 1.2,
@@ -111,10 +118,7 @@ const SectionedImageScroller = () => {
         </div>
       )}
 
-      <div
-        onWheel={handleScroll}
-        className="sticky top-0 left-0 w-full h-screen overflow-hidden flex justify-center items-center bg-black"
-      >
+      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex justify-center items-center bg-black">
         {/* Image Frame */}
         <img ref={imageRef} src={null} alt="Frame" className="w-full h-full object-cover" />
 
