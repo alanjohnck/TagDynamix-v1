@@ -104,7 +104,7 @@ const InteractiveDashboard = () => {
 
   return (
   <div className='hidden md:flex w-full h-[100vh] bg-black flex-col items-center justify-center'>
-     <div className="w-full max-w-7xl h-[95vh] 2xl:h-[75vh] bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
+     <div className="w-full max-w-7xl max-h-5xl 2xl:max-h-2xl bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
 {/* Dashboard Header */}
         <header className="h-16 flex-shrink-0  border-b border-gray-200 bg-[#DEDEDE] flex items-center justify-between px-4 shadow-md rounded-t-lg">
           <div className="w-[10rem] flex items-center gap-4">
@@ -181,7 +181,7 @@ const InteractiveDashboard = () => {
 
           {/* Main Content */}
           <div className="flex flex-1 justify-center  overflow-auto bg-white">
-            <div className="w-full h-3/4 flex justify-center items-start">
+            <div className="w-full h-full flex justify-center items-start">
               {getContentForSection(currentContent)}
             </div>
           </div>
