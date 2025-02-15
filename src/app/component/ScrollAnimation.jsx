@@ -1,156 +1,143 @@
-import React, { useState, useEffect, useRef } from "react";
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import Image from "next/image";
 
 const SectionedImageScroller = () => {
-  const totalFrames = 280;
-  const sectionsCount = 3;
-  const framesPerSection = Math.floor(totalFrames / sectionsCount);
-
-  const sections = [
-    { start: 1, end: framesPerSection, title: "High performance", highlight: "UI" },
-    { start: framesPerSection + 1, end: framesPerSection * 2, title: "Seamless", highlight: "Integration" },
-    { start: framesPerSection * 2 + 1, end: totalFrames, title: "Smart", highlight: "Automation" },
+  const totalFrames = 279;
+  const titles = [
+    { title: "High performance", highlight: "UI" },
+    { title: "Seamless", highlight: "Integration" },
+    { title: "Smart", highlight: "Automation" },
   ];
 
-  const [currentSection, setCurrentSection] = useState(0);
-  const [showText, setShowText] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [imageSrc, setImageSrc] = useState(`/ImageSequence/desktop/TDlandingPage0001.jpg`);
-
-  const frameRef = useRef(1);
-  const textRef = useRef(null);
-  const loaderRef = useRef(null);
-  const scrollHintRef = useRef(null);
-  const isAnimating = useRef(false);
   const imageCache = useRef([]);
+  const canvasRef = useRef(null);
+  const containerRef = useRef(null); // Reference to the container div
 
-  const preloadImages = async () => {
-    const promises = [];
-    for (let i = 1; i <= totalFrames; i++) {
-      const img = new Image();
-      img.src = `/ImageSequence/desktop/TDlandingPage${i.toString().padStart(4, "0")}.jpg`;
-      imageCache.current[i] = img;
-      promises.push(new Promise((resolve) => (img.onload = resolve)));
-    }
-    await Promise.all(promises);
-    setLoading(false); // Hide loader after preloading
-  };
+  useEffect(() => {
+    const preloadImages = async () => {
+      try {
+        const loadImage = (index) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = `/ImageSequence/desktop/TDlandingPage${index
+              .toString()
+              .padStart(4, "0")}.jpg`;
+            img.onload = () => {
+              imageCache.current[index - 1] = img;
+              resolve();
+            };
+            img.onerror = reject;
+          });
+        };
 
-  const playSection = (sectionIndex, reverse = false) => {
-    if (isAnimating.current || sectionIndex < 0 || sectionIndex >= sections.length) return;
+        const chunkSize = 10;
+        for (let i = 1; i <= totalFrames; i += chunkSize) {
+          const chunk = [];
+          for (let j = 0; j < chunkSize && i + j <= totalFrames; j++) {
+            chunk.push(loadImage(i + j));
+          }
+          await Promise.all(chunk);
+        }
 
-    isAnimating.current = true;
-    setShowText(false);
+        setLoading(false);
+        drawImage(0);
+      } catch (error) {
+        console.error("Error loading images:", error);
+      }
+    };
 
-    const section = sections[sectionIndex];
-    const startFrame = reverse ? section.end : section.start;
-    const endFrame = reverse ? section.start : section.end;
+    preloadImages();
+  }, []);
 
-    gsap.to(frameRef, {
-      current: endFrame,
-      duration: 3.5,
-      ease: "power2.inOut",
-      onUpdate: () => {
-        const frameNum = Math.round(frameRef.current);
-        setImageSrc(`/ImageSequence/desktop/TDlandingPage${frameNum.toString().padStart(4, "0")}.jpg`);
-      },
-      onComplete: () => {
-        isAnimating.current = false;
-        setTimeout(() => setShowText(true), 500);
-      },
-    });
-
-    setCurrentSection(sectionIndex);
+  const drawImage = (index) => {
+    if (!canvasRef.current || !imageCache.current[index]) return;
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    ctx.drawImage(
+      imageCache.current[index],
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
   };
 
   useEffect(() => {
-    const handleScroll = (event) => {
-      if (isAnimating.current) return;
-      const isScrollingDown = event.deltaY > 0;
+    if (loading) return;
 
-      setCurrentSection((prev) => {
-        let newSection = isScrollingDown ? prev + 1 : prev - 1;
-        if (newSection < 0 || newSection >= sections.length) return prev;
+    const updateOnScroll = () => {
+      const container = containerRef.current;
+      if (!container) return;
 
-        playSection(newSection, !isScrollingDown);
-        return newSection;
+      // Calculate scroll relative to container
+      const containerTop = container.offsetTop;
+      const containerHeight = container.offsetHeight;
+      const scrollTop = window.scrollY;
+      const scrollPosition = scrollTop - containerTop;
+      const maxScroll = containerHeight - window.innerHeight;
+      let scrollFraction = scrollPosition / maxScroll;
+
+      // Clamp scroll fraction between 0 and 1
+      scrollFraction = Math.max(0, Math.min(1, scrollFraction));
+
+      const frameIndex = Math.min(
+        totalFrames - 1,
+        Math.floor(scrollFraction * totalFrames)
+      );
+
+      drawImage(frameIndex);
+
+      // Update titles based on scroll progress
+      const wordIndex = Math.floor(scrollFraction * titles.length) ;
+
+      titles.forEach((_, index) => {
+        const textElement = document.getElementById(`text-${index}`);
+        if (textElement) {
+          gsap.to(textElement, {
+            opacity: wordIndex === index ? 1 : 0,
+            y: wordIndex === index ? 0 : 50,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        }
       });
     };
 
-    const options = { passive: false };
-    window.addEventListener("wheel", handleScroll, options);
-
-    return () => {
-      window.removeEventListener("wheel", handleScroll, options);
-    };
-  }, []);
-
-  useEffect(() => {
-    preloadImages();
-
-    gsap.to(loaderRef.current, {
-      opacity: 0,
-      duration: 1.2,
-      delay: 2,
-      onComplete: () => setLoading(false),
-    });
-
-    gsap.fromTo(
-      scrollHintRef.current,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, repeat: -1, yoyo: true, duration: 1.2, ease: "power1.inOut" }
-    );
-
-    return () => {
-      gsap.killTweensOf(frameRef);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (showText && textRef.current) {
-      gsap.fromTo(
-        textRef.current,
-        { opacity: 0, y: 30, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power2.out" }
-      );
-    }
-  }, [showText]);
-
-  const currentSectionData = sections[currentSection] || { title: "", highlight: "" };
+    window.addEventListener("scroll", updateOnScroll);
+    return () => window.removeEventListener("scroll", updateOnScroll);
+  }, [loading]);
 
   return (
-    <div className="h-[300vh]">
-      {/* Loader */}
+    <div className="h-[600vh]" ref={containerRef}>
       {loading && (
-        <div ref={loaderRef} className="fixed inset-0 flex items-center justify-center bg-black z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
           <div className="text-white text-3xl font-bold">Loading...</div>
         </div>
       )}
 
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex justify-center items-center bg-black">
-        {/* Image Frame with Next.js <Image /> */}
-        <Image
-          src={imageSrc}
-          alt="Frame"
-          layout="fill"
-          objectFit="cover"
-          priority
+        <canvas
+          ref={canvasRef}
+          width={1920}
+          height={1080}
+          className="w-full h-full object-cover"
         />
 
-        {/* Scroll Down Indicator */}
-        <div ref={scrollHintRef} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-lg">
-          ↓ Scroll Down ↓
-        </div>
-
-        {/* Animated Text */}
-        {showText && (
-          <div ref={textRef} className="absolute top-[20%] left-0 right-0 px-12 text-center opacity-0">
+        {titles.map((title, index) => (
+          <div
+            key={index}
+            id={`text-${index}`}
+            className="absolute top-[20%] left-0 right-0 px-12 text-center opacity-0"
+          >
             <h1 className="text-7xl font-bold text-white mb-4">
-              {currentSectionData.title} <span className="text-orange-600">{currentSectionData.highlight}</span>
+              {title.title}{" "}
+              <span className="text-orange-600">{title.highlight}</span>
             </h1>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
