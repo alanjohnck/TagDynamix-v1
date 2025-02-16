@@ -1,91 +1,108 @@
-"use client"
-import React, { forwardRef, useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import SplitType from 'split-type';
-import {ScrollTrigger} from 'gsap/dist/ScrollTrigger';
+"use client";
+import React, { forwardRef, useEffect, useRef } from "react";
 
-const TextAnimation = forwardRef(({ 
-  text,
-  colors = [],
-  durations = [],
-  staggers = [],
-  className = "text-[3rem] md:text-6xl font-bold",
-  scrollTriggerOptions = {},
-  separator = ' '
-}, ref) => {
-  const textRef = useRef(null);
+const TextAnimation = forwardRef(
+  (
+    {
+      text,
+      colors = ["#000000", "#FF0000", "#0000FF"],
+      durations = [1, 1, 1],
+      staggers = [0.1, 0.1, 0.1],
+      className = "text-4xl md:text-6xl font-bold",
+      scrollTriggerOptions = {},
+      separator = " ",
+    },
+    ref
+  ) => {
+    const textRef = useRef(null);
+    const splitTextRef = useRef(null);
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    useEffect(() => {
+      const setupAnimation = async () => {
+        if (!scrollTriggerOptions.trigger) return;
 
-    // Split text, handling the separator
-    const splitText = new SplitType(textRef.current, {
-      types: "words, chars",
-      wordClass: "split-word",
-      charClass: "split-char"
-    });
-    
-    const words = splitText.words;
-    const chars = splitText.chars;
-    const separatorElements = Array.from(textRef.current.querySelectorAll('.separator'));
+        try {
+          const gsap = (await import("gsap")).default;
+          const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+          const SplitType = (await import("split-type")).default;
 
-    // Create timeline with scroll trigger
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: scrollTriggerOptions.trigger || textRef.current,
-        start: scrollTriggerOptions.start || "top top",
-        end: scrollTriggerOptions.end || "bottom center",
-        scrub: scrollTriggerOptions.scrub || 1,
-        id: "text-animation", // Unique ID to track
-      }
-    });
+          gsap.registerPlugin(ScrollTrigger);
 
-    // Animate colors with staggered effect
-    colors.forEach((color, index) => {
-      tl.to(words, {
-        color,
-        stagger: {
-          each: staggers[index] || 0.1,
-          from: "start",
-          ease: "power2.inOut"
-        },
-        duration: durations[index] || 1,
-      });
-    });
+          // Clean up any previous split text
+          if (splitTextRef.current) {
+            splitTextRef.current.revert();
+          }
 
-    // Initial setup for separators
-    if (separatorElements.length > 0) {
-      gsap.set(separatorElements, {
-        fontWeight: 200,
-        color: "grey",
-        fontSize: '0.8em'
-      });
-    }
+          // Create new split text instance
+          splitTextRef.current = new SplitType(textRef.current, {
+            types: "words,chars",
+            wordClass: "word inline-block",
+            charClass: "char inline-block",
+          });
 
-    return () => {
-      splitText.revert();
-      tl.kill();
+          const words = splitTextRef.current.words;
+
+          // Reset any existing animations
+          gsap.set(words, { color: colors[0] });
+
+          // Create timeline with scroll trigger
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: scrollTriggerOptions.trigger,
+              start: scrollTriggerOptions.start || "top center",
+              end: scrollTriggerOptions.end || "bottom center",
+              scrub: scrollTriggerOptions.scrub ?? 1,
+              toggleActions: "play none none reverse",
+            },
+          });
+
+          // Add color animations
+          colors.forEach((color, index) => {
+            tl.to(words, {
+              color,
+              duration: durations[index],
+              stagger: {
+                each: staggers[index],
+                from: "start",
+                ease: "power2.inOut",
+              },
+            });
+          });
+
+          return () => {
+            if (splitTextRef.current) {
+              splitTextRef.current.revert();
+            }
+            ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+            tl.kill();
+          };
+        } catch (error) {
+          console.error("Error setting up animation:", error);
+        }
+      };
+
+      setupAnimation();
+    }, [colors, durations, staggers, scrollTriggerOptions, text]);
+
+    const renderTextWithSeparator = () => {
+      return text.split(separator).map((part, index, array) => (
+        <React.Fragment key={index}>
+          <span>{part.trim()}</span>
+          {index < array.length - 1 && (
+            <span className="separator mx-2 font-thin">{separator}</span>
+          )}
+        </React.Fragment>
+      ));
     };
-  }, [colors, durations, staggers, scrollTriggerOptions, text]);
 
-  // Render text with custom separator handling
-  const renderTextWithSeparator = () => {
-    return text.split(separator).map((part, index, array) => (
-      <React.Fragment key={index}>
-        <span>{part.trim()}</span>
-        {index < array.length - 1 && (
-          <span className="separator mx-2 font-thin">{separator}</span>
-        )}
-      </React.Fragment>
-    ));
-  };
+    return (
+      <h1 ref={textRef} className={className}>
+        {renderTextWithSeparator()}
+      </h1>
+    );
+  }
+);
 
-  return (
-    <h1 ref={textRef} className={className}>
-      {renderTextWithSeparator()}
-    </h1>
-  );
-});
+TextAnimation.displayName = "TextAnimation";
 
-TextAnimation.displayName = 'TextAnimation';
 export default TextAnimation;

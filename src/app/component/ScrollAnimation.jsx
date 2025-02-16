@@ -37,7 +37,7 @@ const SectionedImageScroller = () => {
           });
         };
 
-        const chunkSize = 10;
+        const chunkSize = 40;
         for (let i = 1; i <= totalFrames; i += chunkSize) {
           const chunk = [];
           for (let j = 0; j < chunkSize && i + j <= totalFrames; j++) {

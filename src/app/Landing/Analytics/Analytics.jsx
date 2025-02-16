@@ -1,11 +1,16 @@
 "use client"
 import React from 'react'
 import AnalyticsData from "../../JsonData/HomeData/AnalyticsData.json"
-import { useRef } from 'react'
+import { useRef,useState,useEffect } from 'react'
 import TextAnimation from '@/app/component/TextAnimation'
 
 function AnalyticsSection() {
-    const videoRef = useRef(null);
+      const videoRef = useRef(null);
+      const [triggerRef, setTriggerRef] = useState(null);
+    
+      useEffect(() => {
+        setTriggerRef(videoRef.current);
+      }, [videoRef.current]);
 
     return (
         <div className='w-full px-6 pb-10 bg-white'>
@@ -38,8 +43,8 @@ function AnalyticsSection() {
                         staggers={[0.3, 0.3, 0.1]}
                         className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center"
                         scrollTriggerOptions={{
-                            trigger: videoRef.current,
-                            start: "center top",
+                            trigger: triggerRef,
+                            start: "top top",
                             end: "bottom center",
                             scrub: 3
                         }}
