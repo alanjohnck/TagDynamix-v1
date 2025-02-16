@@ -6,7 +6,7 @@ function Platform() {
     <div className="w-full bg-gray-100 py-8 sm:py-12 md:py-16">
       <header className="text-center mb-8 sm:mb-12 px-4">
         <p className="text-sm font-medium text-red-600  tracking-wide">
-          Software We Use
+          Partners
         </p>
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mt-2">
           PLATFORMS
@@ -83,7 +83,7 @@ function Platform() {
           </div>
 
           {/* AVEVA - Large tile */}
-          <div className="col-span-2 bg-white rounded-3xl shadow-sm p-8 flex items-center justify-center">
+          <div className="col-span-1 bg-white rounded-3xl shadow-sm p-8 flex items-center justify-center">
             <Image
               src="./platform/aveva.svg"
               alt="AVEVA"
@@ -114,6 +114,17 @@ function Platform() {
               className="object-contain"
             />
           </div>
+          <div className="bg-black rounded-3xl shadow-sm p-6 flex items-center justify-center">
+            <Image
+              src="./platform/sorba.svg"
+              alt="Falkonry"
+              width={140}
+              height={70}
+              className="object-contain"
+            />
+          </div>
+          
+          
         </div>
 
         <div className="text-center mt-8 sm:mt-12 px-4">

@@ -39,7 +39,6 @@ const Values = () => {
       <div className="flex flex-col items-center space-y-8 mb-20">
         <GradientLogo />
         <div className="text-center space-y-2">
-          <p className="text-md text-gray-600">Our Values</p>
           <h1 className="text-4xl md:text-6xl font-bold">SMART VISUAL ZERO LAG</h1>
         </div>
       </div>

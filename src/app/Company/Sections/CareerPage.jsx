@@ -27,15 +27,9 @@ const CareersPage = () => {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 sm:space-y-16">
+    <div className="w-full max-w-7xl h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 sm:space-y-16">
       {/* Team Section */}
-      <section>
-        <h1 className="text-4xl sm:text-6xl font-bold mb-4 sm:mb-6">Team</h1>
-        <div className="bg-gray-200 rounded-lg sm:rounded-xl w-full aspect-[2/1]">
-          {/* Placeholder for team image or content */}
-        </div>
-      </section>
-
+     
       {/* Hiring & Careers Section */}
       <section className="space-y-6 sm:space-y-8">
         <div className="space-y-1 sm:space-y-2">

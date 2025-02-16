@@ -6,9 +6,21 @@ import { gsap } from "gsap";
 const SectionedImageScroller = () => {
   const totalFrames = 279;
   const titles = [
-    { title: "High performance", highlight: "UI" },
-    { title: "Seamless", highlight: "Integration" },
-    { title: "Smart", highlight: "Automation" },
+    { 
+      firstLine: "High performance",
+      highlight: "HMI & SCADA",
+      secondLine: "solutions"
+    },
+    { 
+      firstLine: "Immersive",
+      highlight: "3D",
+      secondLine: "Engine Visualization"
+    },
+    { 
+      firstLine: "Industrial",
+      highlight: "AI",
+      secondLine: "Integration"
+    },
   ];
 
   const [loading, setLoading] = useState(true);
@@ -73,15 +85,15 @@ const SectionedImageScroller = () => {
     const textContainer = document.querySelector(`#text-${index}`);
     if (!textContainer) return;
 
-    // Kill any existing animations for this title
     if (animationsRef.current[index]) {
       animationsRef.current[index].forEach(tween => tween.kill());
     }
     animationsRef.current[index] = [];
 
-    const words = textContainer.querySelectorAll('.word');
+    const firstLine = textContainer.querySelector('.first-line');
+    const highlight = textContainer.querySelector('.highlight');
+    const secondLine = textContainer.querySelector('.second-line');
     
-    // Container animation
     animationsRef.current[index].push(
       gsap.to(textContainer, {
         opacity: show ? 1 : 0,
@@ -90,18 +102,30 @@ const SectionedImageScroller = () => {
       })
     );
 
-    // Words animation
-    words.forEach((word, i) => {
-      animationsRef.current[index].push(
-        gsap.to(word, {
-          opacity: show ? 1 : 0,
-          y: show ? 0 : 50,
-          duration: show ? 0.8 : 0.3,
-          delay: show ? i * 0.5 : 0,
-          ease: show ? "power2.out" : "power2.in"
-        })
+    // Animate each line separately with progressive delays
+    if (show) {
+      gsap.fromTo(firstLine, 
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, delay: 0.2, ease: "power2.out" }
       );
-    });
+      
+      gsap.fromTo(highlight,
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, delay: 0.4, ease: "power2.out" }
+      );
+      
+      gsap.fromTo(secondLine,
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.out" }
+      );
+    } else {
+      gsap.to([firstLine, highlight, secondLine], {
+        y: 50,
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in"
+      });
+    }
   };
 
   useEffect(() => {
@@ -112,12 +136,10 @@ const SectionedImageScroller = () => {
       const container = containerRef.current;
       if (!container) return;
 
-      // Clear the timeout if it exists
       if (scrollTimeout) {
         window.cancelAnimationFrame(scrollTimeout);
       }
 
-      // Set a new timeout
       scrollTimeout = window.requestAnimationFrame(() => {
         const containerTop = container.offsetTop;
         const containerHeight = container.offsetHeight;
@@ -134,17 +156,13 @@ const SectionedImageScroller = () => {
 
         drawImage(frameIndex);
 
-        // Calculate which title should be visible
         const titleIndex = Math.floor(scrollFraction * titles.length);
         
-        // Only animate if the title index has changed
         if (titleIndex !== currentTitleRef.current) {
-          // Hide previous title if it exists
           if (currentTitleRef.current !== -1) {
             animateTitle(currentTitleRef.current, false);
           }
           
-          // Show new title
           animateTitle(titleIndex, true);
           
           currentTitleRef.current = titleIndex;
@@ -153,7 +171,6 @@ const SectionedImageScroller = () => {
     };
 
     window.addEventListener("scroll", updateOnScroll);
-    // Trigger initial animation
     updateOnScroll();
     
     return () => {
@@ -161,7 +178,6 @@ const SectionedImageScroller = () => {
       if (scrollTimeout) {
         window.cancelAnimationFrame(scrollTimeout);
       }
-      // Kill all animations on cleanup
       Object.values(animationsRef.current).forEach(animations => {
         animations.forEach(tween => tween.kill());
       });
@@ -171,7 +187,7 @@ const SectionedImageScroller = () => {
   return (
     <div className="h-[600vh]" ref={containerRef}>
       {loading && (
-        <div className="fixed inset-0 flex flex-col items-center justify-center bg-black z-50">
+        <div className="fixed top-0 inset-0 flex flex-col items-center justify-center bg-black z-50">
           <div className="text-white text-3xl font-bold mb-4">Loading...</div>
           <div className="w-1/2 h-2 bg-gray-700 rounded-full overflow-hidden">
             <div
@@ -195,28 +211,16 @@ const SectionedImageScroller = () => {
           <div
             key={index}
             id={`text-${index}`}
-            className="absolute top-[20%] left-0 right-0 px-12 text-center opacity-0"
+            className="absolute top-[4.4rem] left-0 right-0 px-12 text-center opacity-0 flex flex-col items-center gap-4"
           >
-            <h1 className="text-7xl font-bold text-white mb-4">
-              {title.title.split(" ").map((word, i) => (
-                <span
-                  key={i}
-                  className="word inline-block translate-y-10 mr-2"
-                >
-                  {word}
-                </span>
-              ))}
-              <span className="text-orange-600">
-                {title.highlight.split(" ").map((word, i) => (
-                  <span
-                    key={i}
-                    className="word inline-block translate-y-10 mr-2"
-                  >
-                    {word}
-                  </span>
-                ))}
-              </span>
-            </h1>
+            <div className="text-6xl font-bold text-white first-line">
+              {title.firstLine}
+            </div>
+            <div className="text-6xl font-bold text-orange-600 highlight">
+              {title.highlight} <t />
+              <span className="text-6xl  font-bold text-white">{title.secondLine}</span>
+            </div>
+           
           </div>
         ))}
       </div>

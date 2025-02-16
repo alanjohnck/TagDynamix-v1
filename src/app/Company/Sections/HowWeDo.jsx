@@ -4,8 +4,7 @@ function HowWeDo() {
   return (
     <div className='w-max-7xl h-[140vh] md:h-screen flex flex-col flex-wrap items-start justify-start md:justify-center bg-black text-white p-3 md:p-0  '>
        <div className='w-full h-1/4 flex flex-col justify-center items-center '>
-          <h4 className='font-bold text-white  '>Our Methodology</h4>
-          <h1 className='text-4xl md:text-6xl  font-medium text-center '>THE TAGDYNAMIX WAY</h1>
+          <h1 className='text-4xl md:text-6xl  font-medium text-center '>OUR APPROACH</h1>
        </div>
        <div className='w-full h-1/2 flex flex-wrap items-center justify-around gap-6 '>
            {
@@ -16,7 +15,6 @@ function HowWeDo() {
                             <img src={item.icon} alt={item.title} className='w-12 h-12 mx-auto' />
                         </div>
                         <h1 className='text-2xl font-bold text-center m-2'>{item.title}</h1>
-                        <p className='text-center'>{item.description}</p>
                     </div>
                 )
             })
