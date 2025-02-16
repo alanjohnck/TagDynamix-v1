@@ -211,7 +211,7 @@ const SectionedImageScroller = () => {
           <div
             key={index}
             id={`text-${index}`}
-            className="absolute top-[4.4rem] left-0 right-0 px-12 text-center opacity-0 flex flex-col items-center gap-4"
+            className="absolute top-[5.5rem] left-0 right-0 px-12 text-center opacity-0 flex flex-col items-center gap-4"
           >
             <div className="text-6xl font-bold text-white first-line">
               {title.firstLine}

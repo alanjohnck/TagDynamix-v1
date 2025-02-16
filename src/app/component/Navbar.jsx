@@ -52,10 +52,9 @@ function Navbar() {
 
         {/* Request a Demo Button (Desktop) */}
         <div className="hidden md:flex">
-          <button className="bg-white text-black px-5 py-2 rounded-md hover:bg-gray-200 transition-all">
-            
+          <Link href="/Contact" className="bg-white text-black px-5 py-2 rounded-md hover:bg-gray-200 transition-all">
             Request a Demo
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -86,9 +85,10 @@ function Navbar() {
           <Link href="/Contact" className="block text-white text-lg hover:text-gray-300">
             Contact
           </Link>
+          <Link href="/Contact" className="block text-black text-lg hover:text-gray-300">
           <button className="w-full bg-white text-black px-5 py-2 rounded-md hover:bg-gray-200 transition-all">
-            Request a Demo
-          </button>
+            Request a Demo</button>
+          </Link>
         </div>
       )}
     </nav>
