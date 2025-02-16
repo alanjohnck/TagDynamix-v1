@@ -17,7 +17,6 @@ const InteractiveDashboard = () => {
 
   const navItems = [
     { id: 'home', title: 'Home', icon: <Home className="w-5 h-5" /> },
-    { id: 'stations', title: 'Stations', icon: <Building className="w-5 h-5" /> },
     { id: 'settings', title: 'Settings', icon: <Settings className="w-5 h-5" /> },
     { id: 'alarms', title: 'Alarms', icon: <AlertTriangle className="w-5 h-5" /> },
     { id: 'statistics', title: 'Statistics', icon: <BarChart2 className="w-5 h-5" /> },
@@ -91,12 +90,7 @@ const InteractiveDashboard = () => {
         return <TrendChart />;
       case 'alarms':
         return <AlarmMonitoring />;
-      case 'stations':
-        return (
-          <div className='w-full h-full bg-white rounded-lg shadow-sm mx-12 flex items-start justify-center py-4'>
-            <img className='w-[90%]' src="./homeAssets/stationscreen.svg" alt="Station Screen" />
-          </div>
-        );
+     
       default:
         return <HomePanel />;
     }
@@ -104,7 +98,7 @@ const InteractiveDashboard = () => {
 
   return (
   <div className='hidden md:flex w-full h-[100vh] bg-black flex-col items-center justify-center'>
-     <div className="w-full max-w-7xl min-h-5xl 2xl:min-h-2xl bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
+     <div className="w-full max-w-7xl h-full 2xl:h-3/4 bg-gray-50 flex flex-col rounded-lg overflow-hidden m-4">
 {/* Dashboard Header */}
         <header className="h-16 flex-shrink-0  border-b border-gray-200 bg-[#DEDEDE] flex items-center justify-between px-4 shadow-md rounded-t-lg">
           <div className="w-[10rem] flex items-center gap-4">
@@ -180,8 +174,8 @@ const InteractiveDashboard = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex flex-1 justify-center  overflow-auto bg-white">
-            <div className="w-full h-full flex justify-center items-start">
+          <div className="flex flex-1  justify-center  overflow-auto bg-white">
+            <div className="w-full  flex justify-center items-start">
               {getContentForSection(currentContent)}
             </div>
           </div>
