@@ -9,7 +9,7 @@ const SectionedImageScroller = () => {
     { 
       firstLine: "High performance",
       highlight: "HMI & SCADA",
-      secondLine: "solutions"
+      secondLine: "Solutions"
     },
     { 
       firstLine: "Immersive",
