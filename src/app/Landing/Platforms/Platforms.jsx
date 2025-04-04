@@ -3,7 +3,7 @@ import Image from "next/image";
 
 function Platform() {
   return (
-    <div className="w-full h-screen bg-gray-100 py-8 sm:py-12 md:py-16">
+    <div className="w-full h-fit bg-gray-100 py-8 sm:py-12 md:py-16">
       <header className="text-center mb-8 sm:mb-12 px-4">
         <p className="text-sm font-medium text-red-600  tracking-wide">
           Partners
