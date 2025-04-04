@@ -17,10 +17,10 @@ function Landing() {
         <AnalyticsSection />
         <UNSSection />
         <DynamicExpert />
-
+{/* 
         <div className="hidden md:block">
         <InteractiveDashboard />
-      </div>
+      </div> */}
         <Platform />  
         <Footer />
     </div>

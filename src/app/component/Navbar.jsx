@@ -33,7 +33,7 @@ function Navbar() {
         {/* Logo */}
         <div className="flex-shrink-0 flex-1">
           <Link href="/">
-            <img src="./logo.svg" className="h-12 w-12 cursor-pointer" alt="Logo" />
+            <img src="./logo.svg" className="h-22 w-16 cursor-pointer" alt="Logo" />
           </Link>
         </div>
 
