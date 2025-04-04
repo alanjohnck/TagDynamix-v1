@@ -26,6 +26,7 @@ const SectionedImageScroller = () => {
 
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [loadedImages, setLoadedImages] = useState(0);
   const imageCache = useRef([]);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -42,36 +43,87 @@ const SectionedImageScroller = () => {
   useEffect(() => {
     const preloadImages = async () => {
       try {
-        const loadImage = (index) => {
-          return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = "anonymous"; // Add this to avoid CORS issues
-            img.src = `/ImageSequence/desktop/TDlandingPage${index
-              .toString()
-              .padStart(4, "0")}.jpg`;
-            img.onload = () => {
-              imageCache.current[index - 1] = img;
-              setProgress(((index / totalFrames) * 100).toFixed(0));
-              resolve();
-            };
-            img.onerror = reject;
-          });
-        };
-
-        const chunkSize = 40;
-        for (let i = 1; i <= totalFrames; i += chunkSize) {
-          const chunk = [];
-          for (let j = 0; j < chunkSize && i + j <= totalFrames; j++) {
-            chunk.push(loadImage(i + j));
-          }
-          await Promise.all(chunk);
-        }
-
+        // Preload low resolution images first for initial display
+        await preloadKeyFrames();
+        
+        // Then load all images in parallel with priority
+        await loadAllImages();
+        
         setLoading(false);
         drawImage(0);
       } catch (error) {
         console.error("Error loading images:", error);
       }
+    };
+
+    const preloadKeyFrames = async () => {
+      // Load key frames first (first, middle, and last frames of each section)
+      const keyFrames = [1, 93, 186, 279];
+      await Promise.all(keyFrames.map(loadImage));
+    };
+
+    const loadAllImages = async () => {
+      // Create an array of all image indices
+      const allIndices = Array.from({ length: totalFrames }, (_, i) => i + 1);
+      
+      // Prioritize loading - load frames in chunks with dynamic priority
+      const chunkSize = 10; // Smaller chunks for more frequent progress updates
+      const chunks = [];
+      
+      for (let i = 0; i < allIndices.length; i += chunkSize) {
+        chunks.push(allIndices.slice(i, i + chunkSize));
+      }
+      
+      // Load all chunks in parallel but with controlled concurrency
+      const concurrencyLimit = 3;
+      const chunksToProcess = [...chunks];
+      
+      while (chunksToProcess.length > 0) {
+        const currentChunks = chunksToProcess.splice(0, concurrencyLimit);
+        await Promise.all(
+          currentChunks.map(chunk => 
+            Promise.all(chunk.map(index => {
+              // Skip already loaded images
+              if (imageCache.current[index - 1]) {
+                return Promise.resolve();
+              }
+              return loadImage(index);
+            }))
+          )
+        );
+      }
+    };
+
+    const loadImage = (index) => {
+      return new Promise((resolve, reject) => {
+        // Skip if already loaded
+        if (imageCache.current[index - 1]) {
+          resolve();
+          return;
+        }
+        
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = `/ImageSequence/desktop/TDlandingPage${index
+          .toString()
+          .padStart(4, "0")}.jpg`;
+        
+        img.onload = () => {
+          imageCache.current[index - 1] = img;
+          setLoadedImages(prev => {
+            const newCount = prev + 1;
+            // Calculate progress based on total loaded images
+            setProgress(Math.floor((newCount / totalFrames) * 100));
+            return newCount;
+          });
+          resolve();
+        };
+        
+        img.onerror = () => {
+          console.error(`Failed to load image ${index}`);
+          resolve(); // Resolve anyway to not block other images
+        };
+      });
     };
 
     preloadImages();
@@ -227,7 +279,7 @@ const SectionedImageScroller = () => {
             </div>
             <div className="text-6xl font-bold text-orange-600 highlight">
               {title.highlight} <t />
-              <span className="text-6xl  font-bold text-white">{title.secondLine}</span>
+              <span className="text-6xl font-bold text-white">{title.secondLine}</span>
             </div>
           </div>
         ))}
