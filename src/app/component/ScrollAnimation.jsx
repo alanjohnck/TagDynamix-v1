@@ -26,7 +26,6 @@ const SectionedImageScroller = () => {
 
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [loadedFrames, setLoadedFrames] = useState(0);
   const imageCache = useRef([]);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -34,130 +33,25 @@ const SectionedImageScroller = () => {
   const currentTitleRef = useRef(-1);
   const lastFrameIndex = useRef(0);
   const scrollDirection = useRef('forward');
-  const progressUpdateTimerRef = useRef(null);
+  const totalLoaded = useRef(0);
 
   // Register ScrollTrigger plugin
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    return () => {
-      if (progressUpdateTimerRef.current) {
-        clearTimeout(progressUpdateTimerRef.current);
-      }
-    };
   }, []);
 
-  useEffect(() => {
-    const updateProgressSmoothly = (value) => {
-      // Ensure progress never decreases during loading
-      setProgress(prev => Math.max(prev, value));
-    };
-
-    const preloadImages = async () => {
-      try {
-        // Create a low-resolution initial frame for immediate display
-        const initialImg = new Image();
-        initialImg.crossOrigin = "anonymous";
-        initialImg.src = `/ImageSequence/desktop/TDlandingPage0001.jpg`;
-        initialImg.onload = () => {
-          imageCache.current[0] = initialImg;
-          drawImage(0);
-        };
-
-        // Load images in smaller chunks with priority for keyframes
-        const keyFrames = [1]; // Start with first frame
-        for (let i = 0; i < titles.length; i++) {
-          // Add frames at section transitions as key frames
-          keyFrames.push(Math.floor((i / titles.length) * totalFrames));
-          keyFrames.push(Math.floor(((i + 1) / titles.length) * totalFrames) - 1);
-        }
-        keyFrames.push(totalFrames - 1); // End with last frame
-        
-        // Remove duplicates and sort
-        const uniqueKeyFrames = [...new Set(keyFrames)].sort((a, b) => a - b);
-        
-        // Load key frames first
-        await loadFrames(uniqueKeyFrames);
-        
-        // Then load the rest in smaller chunks and in background
-        const remainingFrames = Array.from(
-          { length: totalFrames }, 
-          (_, i) => i + 1
-        ).filter(i => !uniqueKeyFrames.includes(i));
-        
-        const chunkSize = 20; // Smaller chunks for more frequent progress updates
-        for (let i = 0; i < remainingFrames.length; i += chunkSize) {
-          const chunk = remainingFrames.slice(i, i + chunkSize);
-          // Use lower priority for remaining frames
-          await loadFrames(chunk, false);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading images:", error);
-        setLoading(false); // Still allow user to view partially loaded animation
-      }
-    };
-
-    const loadFrames = async (frameIndices, isKeyFrame = true) => {
-      return new Promise((resolve) => {
-        let completed = 0;
-        
-        frameIndices.forEach((index) => {
-          if (imageCache.current[index - 1]) {
-            completed++;
-            if (completed === frameIndices.length) resolve();
-            return;
-          }
-          
-          const img = new Image();
-          img.crossOrigin = "anonymous";
-          
-          // Use a smaller resolution while loading for faster initial preview
-          if (!isKeyFrame && loading) {
-            img.src = `/ImageSequence/desktop/TDlandingPage${index.toString().padStart(4, "0")}.jpg?quality=60`;
-          } else {
-            img.src = `/ImageSequence/desktop/TDlandingPage${index.toString().padStart(4, "0")}.jpg`;
-          }
-          
-          img.onload = () => {
-            imageCache.current[index - 1] = img;
-            completed++;
-            setLoadedFrames(prev => prev + 1);
-            
-            // Update progress smoothly
-            const newProgress = ((loadedFrames + 1) / totalFrames * 100).toFixed(0);
-            updateProgressSmoothly(newProgress);
-            
-            if (completed === frameIndices.length) resolve();
-            
-            // If we've loaded enough frames to start, allow interaction
-            if (loadedFrames > totalFrames * 0.2 && loading) {
-              setLoading(false);
-            }
-          };
-          
-          img.onerror = () => {
-            completed++;
-            console.error(`Failed to load image ${index}`);
-            if (completed === frameIndices.length) resolve();
-          };
-        });
-      });
-    };
-
-    preloadImages();
-  }, []);
-
+  // Simple function to draw an image to the canvas
   const drawImage = (index) => {
     if (!canvasRef.current) return;
     
     const ctx = canvasRef.current.getContext("2d");
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     
-    // If the exact frame isn't loaded yet, find the nearest available frame
+    // Find the closest loaded image if this one isn't available
     if (!imageCache.current[index]) {
+      // Find nearest available frame
       let nearestIndex = null;
-      let minDistance = totalFrames;
+      let minDistance = Infinity;
       
       for (let i = 0; i < imageCache.current.length; i++) {
         if (imageCache.current[i]) {
@@ -169,7 +63,8 @@ const SectionedImageScroller = () => {
         }
       }
       
-      if (nearestIndex !== null) {
+      // Draw the nearest frame if found
+      if (nearestIndex !== null && imageCache.current[nearestIndex]) {
         ctx.drawImage(
           imageCache.current[nearestIndex],
           0,
@@ -179,6 +74,7 @@ const SectionedImageScroller = () => {
         );
       }
     } else {
+      // Draw the exact frame
       ctx.drawImage(
         imageCache.current[index],
         0,
@@ -189,6 +85,7 @@ const SectionedImageScroller = () => {
     }
   };
 
+  // Title animation function
   const animateTitle = (index, show) => {
     const textContainer = document.querySelector(`#text-${index}`);
     if (!textContainer) return;
@@ -236,103 +133,157 @@ const SectionedImageScroller = () => {
     }
   };
 
+  // Image preloading effect - completely rewritten for reliability
+  useEffect(() => {
+    let isMounted = true;
+    
+    // Simple method to safely update progress
+    const updateProgress = (loaded) => {
+      if (!isMounted) return;
+      const percentage = Math.min(100, Math.floor((loaded / totalFrames) * 100));
+      setProgress(percentage);
+    };
+
+    // Preload all images in smaller batches
+    const preloadImages = async () => {
+      // Display first frame immediately
+      const initialImg = new Image();
+      initialImg.crossOrigin = "anonymous";
+      initialImg.src = `/ImageSequence/desktop/TDlandingPage0001.jpg`;
+      
+      initialImg.onload = () => {
+        imageCache.current[0] = initialImg;
+        if (canvasRef.current) {
+          drawImage(0);
+        }
+        totalLoaded.current = 1;
+        updateProgress(1);
+      };
+
+      try {
+        // Load in small batches of sequential frames for reliable progress updates
+        const batchSize = 10;
+        for (let startFrame = 1; startFrame <= totalFrames; startFrame += batchSize) {
+          const endFrame = Math.min(startFrame + batchSize - 1, totalFrames);
+          const framesToLoad = [];
+          
+          for (let i = startFrame; i <= endFrame; i++) {
+            framesToLoad.push(i);
+          }
+          
+          await loadFrameBatch(framesToLoad);
+          
+          // Allow early start after 25% loaded
+          if (totalLoaded.current >= totalFrames * 0.25 && loading && isMounted) {
+            console.log("Enough frames loaded, can start animation");
+          }
+        }
+        
+        if (isMounted) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error loading images:", error);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    // Load a batch of frames and update progress
+    const loadFrameBatch = (frameIndices) => {
+      return new Promise((resolve) => {
+        let completed = 0;
+        const total = frameIndices.length;
+        
+        // For empty batch, resolve immediately
+        if (total === 0) {
+          resolve();
+          return;
+        }
+        
+        frameIndices.forEach((frameNum) => {
+          // Skip already loaded frames
+          if (imageCache.current[frameNum - 1]) {
+            completed++;
+            if (completed === total) resolve();
+            return;
+          }
+          
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          const paddedIndex = frameNum.toString().padStart(4, "0");
+          img.src = `/ImageSequence/desktop/TDlandingPage${paddedIndex}.jpg`;
+          
+          img.onload = () => {
+            if (!isMounted) return;
+            
+            imageCache.current[frameNum - 1] = img;
+            totalLoaded.current++;
+            updateProgress(totalLoaded.current);
+            
+            completed++;
+            if (completed === total) resolve();
+          };
+          
+          img.onerror = () => {
+            completed++;
+            console.error(`Failed to load image ${frameNum}`);
+            if (completed === total) resolve();
+          };
+        });
+      });
+    };
+
+    preloadImages();
+    
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // ScrollTrigger setup effect
   useEffect(() => {
     if (loading) return;
 
-    // Create a ScrollTrigger for smoother scrolling
     const scrollTrigger = ScrollTrigger.create({
       trigger: containerRef.current,
       start: "top top",
       end: "bottom bottom",
-      scrub: 1.5, // Smoother scrubbing effect
+      scrub: 1.5,
       onUpdate: (self) => {
-        // Determine scroll direction
-        const newDirection = self.direction > 0 ? 'forward' : 'backward';
-        scrollDirection.current = newDirection;
+        scrollDirection.current = self.direction > 0 ? 'forward' : 'backward';
         
-        // Calculate the frame index based on scroll progress
-        const progress = self.progress;
+        // Calculate current frame based on scroll position
+        const scrollProgress = self.progress;
         let frameIndex = Math.min(
           totalFrames - 1,
-          Math.floor(progress * totalFrames)
+          Math.floor(scrollProgress * totalFrames)
         );
         
-        // Prevent frame index from going backwards unless actually scrolling backward
-        if (newDirection === 'forward' && frameIndex < lastFrameIndex.current) {
+        // Prevent jumping backward unless intentionally scrolling backward
+        if (scrollDirection.current === 'forward' && frameIndex < lastFrameIndex.current) {
           frameIndex = lastFrameIndex.current;
         }
         
-        // Update the last frame index
         lastFrameIndex.current = frameIndex;
+        drawImage(frameIndex);
         
-        // Draw the current frame
-        requestAnimationFrame(() => drawImage(frameIndex));
-        
-        // Calculate which title should be shown
-        const titleIndex = Math.floor(progress * titles.length);
-        
+        // Update visible title
+        const titleIndex = Math.floor(scrollProgress * titles.length);
         if (titleIndex !== currentTitleRef.current) {
           if (currentTitleRef.current !== -1) {
             animateTitle(currentTitleRef.current, false);
           }
-          
           animateTitle(titleIndex, true);
           currentTitleRef.current = titleIndex;
         }
       }
     });
 
-    // Continue loading remaining frames in background even after initial display
-    const loadRemainingFrames = async () => {
-      // Find missing frames
-      const missingFrames = [];
-      for (let i = 0; i < totalFrames; i++) {
-        if (!imageCache.current[i]) {
-          missingFrames.push(i + 1);
-        }
-      }
-      
-      if (missingFrames.length > 0) {
-        const chunkSize = 10;
-        for (let i = 0; i < missingFrames.length; i += chunkSize) {
-          const chunk = missingFrames.slice(i, i + chunkSize);
-          await new Promise(resolve => {
-            setTimeout(async () => {
-              try {
-                await Promise.all(chunk.map(index => {
-                  return new Promise((res) => {
-                    if (imageCache.current[index - 1]) {
-                      res();
-                      return;
-                    }
-                    
-                    const img = new Image();
-                    img.crossOrigin = "anonymous";
-                    img.src = `/ImageSequence/desktop/TDlandingPage${index.toString().padStart(4, "0")}.jpg`;
-                    img.onload = () => {
-                      imageCache.current[index - 1] = img;
-                      res();
-                    };
-                    img.onerror = res;
-                  });
-                }));
-              } catch (error) {
-                console.error("Error loading remaining images:", error);
-              }
-              resolve();
-            }, 100); // Small delay to prevent browser from freezing
-          });
-        }
-      }
-    };
-    
-    loadRemainingFrames();
-
     return () => {
-      // Clean up ScrollTrigger
       scrollTrigger.kill();
-      
-      // Clean up GSAP animations
       Object.values(animationsRef.current).forEach(animations => {
         animations.forEach(tween => tween.kill());
       });
@@ -344,14 +295,15 @@ const SectionedImageScroller = () => {
       {loading && (
         <div className="fixed top-0 inset-0 flex flex-col items-center justify-center bg-black z-50">
           <div className="text-white text-3xl font-bold mb-4">Loading...</div>
-          <div className="w-1/2 h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div className="w-64 h-2 bg-gray-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-orange-600 transition-all duration-300"
+              className="h-full bg-orange-600"
               style={{ width: `${progress}%` }}
             />
           </div>
           <div className="text-white text-xl mt-2">{progress}%</div>
-          {progress > 20 && (
+          
+          {progress >= 25 && (
             <button 
               onClick={() => setLoading(false)}
               className="mt-6 px-6 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
@@ -378,7 +330,7 @@ const SectionedImageScroller = () => {
           >
            <div className="text-6xl font-bold text-white first-line">{title.firstLine}</div>
             <div className="text-6xl font-bold text-orange-600 highlight">
-              {title.highlight} <t />
+              {title.highlight}
               <span className="text-6xl font-bold text-white">{title.secondLine}</span>
             </div>
           </div>
