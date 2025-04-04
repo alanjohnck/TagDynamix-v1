@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -24,6 +24,9 @@ const SectionedImageScroller = () => {
     },
   ]
 
+  const [loading, setLoading] = useState(true)
+  const [progress, setProgress] = useState(0)
+  const [loadedImages, setLoadedImages] = useState(0)
   const imageCache = useRef([])
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
@@ -31,6 +34,7 @@ const SectionedImageScroller = () => {
   const currentTitleRef = useRef(-1)
   const lastFrameIndex = useRef(0)
   const scrollDirection = useRef("forward")
+  const loadingTimeoutRef = useRef(null)
 
   // Register ScrollTrigger plugin
   useEffect(() => {
@@ -46,39 +50,52 @@ const SectionedImageScroller = () => {
       ctx.imageSmoothingQuality = "medium" // Balance between quality and performance
     }
 
-    // Start loading images immediately
+    // Set a short timeout to ensure loading doesn't show for too long
+    loadingTimeoutRef.current = setTimeout(() => {
+      if (loading) {
+        console.log("Loading timeout reached, showing content")
+        setLoading(false)
+      }
+    }, 3000) // Only show loader for max 3 seconds
+
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current)
+      }
+    }
+  }, [loading])
+
+  useEffect(() => {
+    const preloadImages = async () => {
+      try {
+        // Preload key frames first for initial display
+        await preloadKeyFrames()
+
+        // Once key frames are loaded, hide the loader
+        setLoading(false)
+
+        // Draw the first image immediately
+        drawImage(0)
+
+        // Then load all images in parallel with optimized strategy
+        loadAllImages()
+      } catch (error) {
+        console.error("Error loading images:", error)
+        setLoading(false)
+      }
+    }
+
     preloadImages()
   }, [])
-
-  const preloadImages = async () => {
-    try {
-      // Preload key frames first for initial display
-      await preloadKeyFrames()
-
-      // Draw the first image immediately
-      drawImage(0)
-
-      // Then load all images in parallel with optimized strategy
-      loadAllImages()
-    } catch (error) {
-      console.error("Error loading images:", error)
-    }
-  }
 
   const preloadKeyFrames = async () => {
     // Load key frames first (start of each section + some extras)
     const framesPerSection = Math.floor(totalFrames / titles.length)
     const keyFrames = []
 
-    titles.forEach((_, i) => {
-      const sectionStart = i * framesPerSection
-      keyFrames.push(sectionStart + 1)
-      // Also add one frame in the middle of each section
-      keyFrames.push(Math.min(sectionStart + Math.floor(framesPerSection / 2), totalFrames))
-    })
-
-    // Add last frame
-    keyFrames.push(totalFrames)
+    // Just load the first few frames to get started quickly
+    keyFrames.push(1) // First frame
+    keyFrames.push(Math.floor(totalFrames * 0.1)) // 10% in
 
     // Remove duplicates
     const uniqueKeyFrames = [...new Set(keyFrames)].filter((f) => f <= totalFrames)
@@ -144,6 +161,12 @@ const SectionedImageScroller = () => {
 
       img.onload = () => {
         imageCache.current[index - 1] = img
+        setLoadedImages((prev) => {
+          const newCount = prev + 1
+          // Calculate progress based on total loaded images
+          setProgress(Math.floor((newCount / totalFrames) * 100))
+          return newCount
+        })
         resolve()
       }
 
@@ -237,6 +260,8 @@ const SectionedImageScroller = () => {
   }
 
   useEffect(() => {
+    if (loading) return
+
     // Create a ScrollTrigger for smoother scrolling
     const scrollTrigger = ScrollTrigger.create({
       trigger: containerRef.current,
@@ -285,10 +310,20 @@ const SectionedImageScroller = () => {
         animations.forEach((tween) => tween.kill())
       })
     }
-  }, [])
+  }, [loading])
 
   return (
     <div className="h-[600vh]" ref={containerRef}>
+      {loading && (
+        <div className="fixed top-0 inset-0 flex flex-col items-center justify-center bg-black z-50">
+          <div className="text-white text-3xl font-bold mb-4">Loading...</div>
+          <div className="w-3/4 sm:w-1/2 h-3 bg-gray-700 rounded-full overflow-hidden">
+            <div className="h-full bg-orange-600 transition-all duration-300" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="text-white text-xl mt-2">{progress}%</div>
+        </div>
+      )}
+
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex justify-center items-center bg-black">
         <canvas ref={canvasRef} width={1920} height={1080} className="w-full h-full object-cover" />
 
