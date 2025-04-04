@@ -6,7 +6,7 @@ function HowWeDo() {
        <div className='w-full h-1/4 flex flex-col justify-center items-center '>
           <h1 className='text-4xl md:text-6xl  font-medium text-center '>OUR APPROACH</h1>
        </div>
-       <div className='w-full h-1/2 flex flex-wrap items-center justify-around gap-6 '>
+       <div className='w-full h-1/2 flex flex-wrap items-center justify-around gap-10 '>
            {
             HowWeDoData.map((item, index) => {
                 return (

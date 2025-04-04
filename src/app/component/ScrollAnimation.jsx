@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const SectionedImageScroller = () => {
   const totalFrames = 279;
   const titles = [
     { 
-      firstLine: "High performance",
+      firstLine: "High Performance",
       highlight: "HMI & SCADA",
-      secondLine: "solutions"
+      secondLine: "Solutions"
     },
     { 
       firstLine: "Immersive",
@@ -30,6 +31,13 @@ const SectionedImageScroller = () => {
   const containerRef = useRef(null);
   const animationsRef = useRef({});
   const currentTitleRef = useRef(-1);
+  const lastFrameIndex = useRef(0);
+  const scrollDirection = useRef('forward');
+
+  // Register ScrollTrigger plugin
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+  }, []);
 
   useEffect(() => {
     const preloadImages = async () => {
@@ -37,6 +45,7 @@ const SectionedImageScroller = () => {
         const loadImage = (index) => {
           return new Promise((resolve, reject) => {
             const img = new Image();
+            img.crossOrigin = "anonymous"; // Add this to avoid CORS issues
             img.src = `/ImageSequence/desktop/TDlandingPage${index
               .toString()
               .padStart(4, "0")}.jpg`;
@@ -131,32 +140,36 @@ const SectionedImageScroller = () => {
   useEffect(() => {
     if (loading) return;
 
-    let scrollTimeout;
-    const updateOnScroll = () => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      if (scrollTimeout) {
-        window.cancelAnimationFrame(scrollTimeout);
-      }
-
-      scrollTimeout = window.requestAnimationFrame(() => {
-        const containerTop = container.offsetTop;
-        const containerHeight = container.offsetHeight;
-        const scrollTop = window.scrollY;
-        const scrollPosition = scrollTop - containerTop;
-        const maxScroll = containerHeight - window.innerHeight;
-        let scrollFraction = scrollPosition / maxScroll;
-        scrollFraction = Math.max(0, Math.min(1, scrollFraction));
-
-        const frameIndex = Math.min(
+    // Create a ScrollTrigger for smoother scrolling
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1.5, // Smoother scrubbing effect
+      onUpdate: (self) => {
+        // Determine scroll direction
+        scrollDirection.current = self.direction > 0 ? 'forward' : 'backward';
+        
+        // Calculate the frame index based on scroll progress
+        const progress = self.progress;
+        let frameIndex = Math.min(
           totalFrames - 1,
-          Math.floor(scrollFraction * totalFrames)
+          Math.floor(progress * totalFrames)
         );
-
+        
+        // Prevent jumping backward in animation unless actually scrolling backward
+        if (scrollDirection.current === 'forward' && frameIndex < lastFrameIndex.current) {
+          frameIndex = lastFrameIndex.current;
+        }
+        
+        // Update the last frame index
+        lastFrameIndex.current = frameIndex;
+        
+        // Draw the current frame
         drawImage(frameIndex);
-
-        const titleIndex = Math.floor(scrollFraction * titles.length);
+        
+        // Calculate which title should be shown
+        const titleIndex = Math.floor(progress * titles.length);
         
         if (titleIndex !== currentTitleRef.current) {
           if (currentTitleRef.current !== -1) {
@@ -164,20 +177,16 @@ const SectionedImageScroller = () => {
           }
           
           animateTitle(titleIndex, true);
-          
           currentTitleRef.current = titleIndex;
         }
-      });
-    };
-
-    window.addEventListener("scroll", updateOnScroll);
-    updateOnScroll();
-    
-    return () => {
-      window.removeEventListener("scroll", updateOnScroll);
-      if (scrollTimeout) {
-        window.cancelAnimationFrame(scrollTimeout);
       }
+    });
+
+    return () => {
+      // Clean up ScrollTrigger
+      scrollTrigger.kill();
+      
+      // Clean up GSAP animations
       Object.values(animationsRef.current).forEach(animations => {
         animations.forEach(tween => tween.kill());
       });
@@ -211,7 +220,7 @@ const SectionedImageScroller = () => {
           <div
             key={index}
             id={`text-${index}`}
-            className="absolute top-[5.5rem] left-0 right-0 px-12 text-center opacity-0 flex flex-col items-center gap-4"
+            className="absolute top-1/4 left-0 right-0 px-4 sm:px-8 md:px-12 text-center opacity-0 flex flex-col items-center gap-2 sm:gap-4"
           >
             <div className="text-6xl font-bold text-white first-line">
               {title.firstLine}
@@ -220,7 +229,6 @@ const SectionedImageScroller = () => {
               {title.highlight} <t />
               <span className="text-6xl  font-bold text-white">{title.secondLine}</span>
             </div>
-           
           </div>
         ))}
       </div>
