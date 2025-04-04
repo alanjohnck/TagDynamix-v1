@@ -154,7 +154,7 @@ const SectionedImageScroller = () => {
       img.decoding = "async" // Use async decoding for better performance
 
       // Add small random delay to prevent server throttling
-      const delay = Math.random() * 50
+      const delay = Math.random() * 1
       setTimeout(() => {
         img.src = `/ImageSequence/desktop/TDlandingPage${index.toString().padStart(4, "0")}.jpg`
       }, delay)
