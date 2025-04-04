@@ -8,9 +8,9 @@ const SectionedImageScroller = () => {
   const totalFrames = 279;
   const titles = [
     { 
-      firstLine: "High performance",
+      firstLine: "High Performance",
       highlight: "HMI & SCADA",
-      secondLine: "solutions"
+      secondLine: "Solutions"
     },
     { 
       firstLine: "Immersive",
@@ -330,11 +330,16 @@ const SectionedImageScroller = () => {
           >
            <div className="text-6xl font-bold text-white first-line">{title.firstLine}</div>
             <div className="text-6xl font-bold text-orange-600 highlight">
-              {title.highlight}
+              {title.highlight} <t></t>
               <span className="text-6xl font-bold text-white">{title.secondLine}</span>
             </div>
           </div>
         ))}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+        <div className="text-white text-lg font-medium animate-bounce">
+          Scroll Down ↓
+        </div>
+      </div>
       </div>
     </div>
   );
