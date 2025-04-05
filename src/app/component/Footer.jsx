@@ -22,7 +22,7 @@ export default function Footer() {
               style={{
                 left: "41.5%", // Aligns with 'n' of Unlock
                 bottom: "-0.7em", // Adjust vertical position
-                transform: "translateX(-18%)", // Fine-tune alignment
+                transform: "translateX(-14%)", // Fine-tune alignment
               }}
             >
               Possibilities
