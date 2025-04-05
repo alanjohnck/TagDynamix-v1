@@ -78,7 +78,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="./favicon.ico" type="image/x-icon" />
       </head>
       <body className={`${inter.variable} display overflow-x-hidden`}>
         <Navbar />
