@@ -32,7 +32,17 @@ export const metadata = {
     "Rockwell Software",
     "Siemens Automation",
     "AVEVA Solutions",
-    "Industrial Data Analytics"
+    "Industrial Data Analytics",
+    "HMI development",
+    "SCADA development",
+"MES Development",
+"PLC code",
+"Automation",
+"HMI developers in UK",
+"HMI developers in Ireland",
+"SCADA developers in UK",
+"SCADA developers in Ireland/ Germany /Sweden/ etc...",
+"Visualization companies in europe/ UK/ Ireland"
   ],
   openGraph: {
     title: "TagDynamix - Industrial Automation & SCADA Solutions",
