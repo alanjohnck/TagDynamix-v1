@@ -25,9 +25,8 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-30 transition-transform duration-500 ${
-        showNavbar ? "translate-y-0" : "-translate-y-full"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-30 transition-transform duration-500 ${showNavbar ? "translate-y-0" : "-translate-y-full"
+        }`}
     >
       <div className="max-w-[95%] mx-auto bg-black mt-4 p-4 rounded-lg flex items-center justify-between h-20">
         {/* Logo */}
@@ -42,9 +41,9 @@ function Navbar() {
           <Link href="/Company" className="hover:text-gray-300 transition-colors">
             Company
           </Link>
-          <Link href="/Pricing" className="hover:text-gray-300 transition-colors">
+          {/* <Link href="/Pricing" className="hover:text-gray-300 transition-colors">
             Pricing
-          </Link>
+          </Link> */}
           <Link href="/Contact" className="hover:text-gray-300 transition-colors">
             Contact
           </Link>
@@ -81,9 +80,9 @@ function Navbar() {
           <Link href="/Company" className="text-white text-lg hover:text-gray-300">
             Company
           </Link>
-          <Link href="/Pricing" className="text-white text-lg hover:text-gray-300">
+          {/* <Link href="/Pricing" className="text-white text-lg hover:text-gray-300">
             Pricing
-          </Link>
+          </Link> */}
           <Link href="/Contact" className="text-white text-lg hover:text-gray-300">
             Contact
           </Link>
