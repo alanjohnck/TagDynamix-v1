@@ -57,6 +57,12 @@ export default function Footer() {
             Tag Dynamix is a registered trademark of Tag Dynamix. Third party trademarks are the property of their
             respective owners.
           </p>
+          <p className="text-gray-500 text-xs mt-4">
+            Website created by{" "}
+            <a href="https://devou.in" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline">
+              devou-devou.in
+            </a>
+          </p>
         </div>
       </div>
     </footer>
