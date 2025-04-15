@@ -60,7 +60,7 @@ export default function Footer() {
           <p className="text-gray-500 text-xs mt-4">
             Website created by{" "}
             <a href="https://devou.in" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline">
-              devou-devou.in
+              devou
             </a>
           </p>
         </div>
