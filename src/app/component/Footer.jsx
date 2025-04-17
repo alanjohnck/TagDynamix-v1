@@ -1,3 +1,4 @@
+import { LinkedIn } from "@mui/icons-material";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import Link from "next/link";
 
@@ -57,7 +58,17 @@ export default function Footer() {
             Tag Dynamix is a registered trademark of Tag Dynamix. Third party trademarks are the property of their
             respective owners.
           </p>
-          ?
+            <div className="mt-4">
+            <Link
+              href="https://www.linkedin.com/company/tagdynamix/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+            >
+              <LinkedIn />
+            </Link>
+            
+            </div>
         </div>
       </div>
     </footer>
