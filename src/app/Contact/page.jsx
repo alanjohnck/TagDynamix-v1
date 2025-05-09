@@ -33,7 +33,7 @@ function Contact() {
       {/* Main Content */}
       <div className="w-full h-auto flex flex-col items-center justify-around px-4 md:px-0">
         {/* Heading Section */}
-        <div className="w-full max-w-[50%] font-bold flex flex-col md:flex-row items-center justify-center md:justify-around text-center md:text-left">
+        <div className="w-full max-w-[50%] font-bold flex flex-col md:flex-row items-center justify-center md:justify-around text-center md:text-left m-4">
           <h1 className="font-bold text-4xl md:text-6xl">Talk with</h1>
           <h1 className="rotate-90 text-5xl font-bold hidden md:block">↑</h1>
           <h1 className="font-bold text-4xl md:text-6xl">an expert</h1>
