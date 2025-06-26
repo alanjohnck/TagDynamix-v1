@@ -43,7 +43,9 @@ export const metadata = {
 "HMI developers in Ireland",
 "SCADA developers in UK",
 "SCADA developers in Ireland/ Germany /Sweden/ etc...",
-"Visualization companies in europe/ UK/ Ireland"
+"Visualization companies in europe/ UK/ Ireland",
+"TeamDynamix",
+"TagDynamix",
   ],
   openGraph: {
     title: "TagDynamix - Industrial Automation & SCADA Solutions",
